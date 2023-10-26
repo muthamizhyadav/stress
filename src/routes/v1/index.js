@@ -3,7 +3,8 @@ const authRoute = require('./auth.route');
 const userRoute = require('./user.route');
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
-const agoraRoute = require('./AgoraAppId.route')
+const agoraRoute = require('./AgoraAppId.route');
+const userDetails = require('./userDetails.route');
 const router = express.Router();
 
 const defaultRoutes = [
@@ -18,6 +19,10 @@ const defaultRoutes = [
   {
     path: '/agora',
     route: agoraRoute,
+  },
+  {
+    path: '/userDetails',
+    route: userDetails,
   },
 ];
 
