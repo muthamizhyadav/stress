@@ -3,6 +3,8 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 
+const { v4 } = require('uuid')
+
 const userSchema = new mongoose.Schema(
   {
     _id: {
@@ -40,6 +42,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    info_collected: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );
@@ -119,8 +125,8 @@ const OTPSchema = mongoose.Schema(
     userType: {
       type: String,
     },
-    used: {
-      type: Boolean,
+    userId: {
+      type: String,
       default: false,
     },
     active: {
@@ -133,6 +139,16 @@ const OTPSchema = mongoose.Schema(
     OTP: {
       type: Number,
     },
+    expTime: {
+      type: Number,
+    },
+    token: {
+      type: String,
+    },
+    used: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );

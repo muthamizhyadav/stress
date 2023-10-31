@@ -4,21 +4,16 @@ const httpStatus = require('http-status');
 const config = require('../config/config');
 const { User, Counsellor, OTP } = require('../models/userDetails.model');
 const { Otp } = require("./otp.service")
-const createUserDetails = async (body) => {
-  let val = await User.create(body);
-  return val;
-};
+
 const ApiError = require('../utils/ApiError');
 
 
 const verify_mobile_number = async (req) => {
-
-
   const { mobileNumber } = req.body;
-  let user = await User.findOne({ mobileNumber: mobileNumber });
+  let user = await Counsellor.findOne({ mobileNumber: mobileNumber });
 
   if (!user) {
-    user = await User.create({
+    user = await Counsellor.create({
       mobileNumber: mobileNumber,
     })
   }
@@ -31,9 +26,7 @@ const verify_mobile_number = async (req) => {
 const verify_otp = async (req) => {
   let otpId = req.otp;
   let OTP_Code = req.body.otp;
-  console.log(otpId, 9879)
   let find_otp = await OTP.findById(otpId)
-  console.log(find_otp, 879)
   if (!find_otp) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Invaid Access');
   }
@@ -49,20 +42,15 @@ const verify_otp = async (req) => {
   if (find_otp.used) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Already Used');
   }
-
-  console.log(find_otp, 879)
-
   find_otp.used = true;
   find_otp.save();
 
-  let user = await User.findById(req.userId)
-  console.log(user)
-
+  let user = await Counsellor.findById(req.userId)
   return user;
 }
 
 const get_user_deatils = async (req) => {
-  let user = await User.findById(req.userId)
+  let user = await Counsellor.findById(req.userId)
   return user;
 }
-module.exports = { createUserDetails, verify_mobile_number, verify_otp, get_user_deatils };
+module.exports = {  verify_mobile_number, verify_otp, get_user_deatils };
