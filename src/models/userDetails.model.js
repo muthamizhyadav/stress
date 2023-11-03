@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
     },
-    address: {
+    location: {
       type: String,
     },
     occupation: {
@@ -29,10 +29,16 @@ const userSchema = new mongoose.Schema(
     languageKnown: {
       type: Array,
     },
+    neighbourName: {
+      type: String,
+    },
     neighbourContact: {
       type: String,
     },
-    favouritePersion: {
+    immediateContact: {
+      type: String,
+    },
+    immediateContactRelationship: {
       type: String,
     },
     addContact: {
@@ -45,6 +51,9 @@ const userSchema = new mongoose.Schema(
     info_collected: {
       type: Boolean,
       default: false
+    },
+    languages: {
+      type: Array,
     }
   },
   { timestamps: true }

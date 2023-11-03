@@ -75,4 +75,13 @@ const get_user_deatils = async (req) => {
   let user = await User.findById(req.userId)
   return user;
 }
-module.exports = { createUserDetails, verify_mobile_number, verify_otp, get_user_deatils, verify_otp_get };
+
+const update_user_deatils = async (req) => {
+  let user = await User.findById(req.userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid Access');
+  }
+  user = await User.findByIdAndUpdate({ _id: user._id }, { ...req.body, ...{ info_collected: true } }, { new: true });
+  return user;
+}
+module.exports = { createUserDetails, verify_mobile_number, verify_otp, get_user_deatils, verify_otp_get, update_user_deatils };

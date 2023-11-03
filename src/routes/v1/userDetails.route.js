@@ -12,6 +12,7 @@ router.route('/resend/otp').post(userDetailsController.verify_mobile_number);
 
 
 router.route('/user/deatils').get(UserAuth, userDetailsController.get_user_deatils);
+router.route('/user/deatils').post(UserAuth, userDetailsController.update_user_deatils);
 
 
 module.exports = router;
