@@ -7,10 +7,9 @@ const tokenSchema = mongoose.Schema(
     token: {
       type: String,
       required: true,
-      index: true,
     },
     user: {
-      type: mongoose.SchemaTypes.ObjectId,
+      type: String,
       ref: 'User',
       required: true,
     },
@@ -41,4 +40,4 @@ tokenSchema.plugin(toJSON);
  */
 const Token = mongoose.model('Token', tokenSchema);
 
-module.exports = Token;
+module.exports = { Token };

@@ -3,7 +3,7 @@ const moment = require('moment');
 const httpStatus = require('http-status');
 const config = require('../config/config');
 const userService = require('./user.service');
-const { Token } = require('../models');
+const { Token } = require('../models/token.model');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 
@@ -21,6 +21,7 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
     iat: moment().unix(),
     exp: expires.unix(),
     type,
+    userId: userId
   };
   return jwt.sign(payload, secret);
 };
@@ -66,7 +67,8 @@ const verifyToken = async (token, type) => {
  * @returns {Promise<Object>}
  */
 const generateAuthTokens = async (user) => {
-  const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
+  console.log(user)
+  const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'days');
   const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS);
 
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
@@ -113,6 +115,20 @@ const generateVerifyEmailToken = async (user) => {
   return verifyEmailToken;
 };
 
+
+const generateToken_OTP = (userId, id, expires, type, secret = config.jwt.secret) => {
+  const payload = {
+    userId: userId,
+    iat: moment().unix(),
+    exp: expires.unix(),
+    type,
+    id: id,
+
+  };
+  return jwt.sign(payload, secret);
+};
+
+
 module.exports = {
   generateToken,
   saveToken,
@@ -120,4 +136,5 @@ module.exports = {
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailToken,
+  generateToken_OTP
 };
