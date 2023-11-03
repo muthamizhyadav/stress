@@ -53,7 +53,7 @@ const verifyOTP = async (req, res, next) => {
     req.otp = payload['id'];
     return next();
   } catch {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Otp Expired');
+    return res.send(httpStatus.BAD_GATEWAY, 'Otp Expired');
   }
 };
 

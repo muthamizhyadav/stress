@@ -50,7 +50,7 @@ const verify_otp = async (req) => {
 }
 
 const get_user_deatils = async (req) => {
-  let user = await Counsellor.findById(req.userId)
+  let user = await Counsellor.findById(req.userId);
   return user;
 }
-module.exports = {  verify_mobile_number, verify_otp, get_user_deatils };
+module.exports = { verify_mobile_number, verify_otp, get_user_deatils };

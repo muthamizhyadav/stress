@@ -24,6 +24,11 @@ const verify_otp = catchAsync(async (req, res) => {
 });
 
 
+const verify_otp_get = catchAsync(async (req, res) => {
+  const data = await UserDetailsService.verify_otp_get(req);
+  res.send(data);
+});
+
 const get_user_deatils = catchAsync(async (req, res) => {
   const data = await UserDetailsService.get_user_deatils(req);
   res.send(data);
@@ -33,5 +38,6 @@ module.exports = {
   createUserDetails,
   verify_mobile_number,
   verify_otp,
+  verify_otp_get,
   get_user_deatils
 };

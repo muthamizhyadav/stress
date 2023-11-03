@@ -34,7 +34,7 @@ const { OTP } = require('../models/userDetails.model');
 
 const saveOtp = async (number, otp, user) => {
 
-    const exp = moment().add(3, 'minutes');
+    const exp = moment().add(1, 'minutes');
 
     let otp_gen = await OTP.create({
         OTP: otp,

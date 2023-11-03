@@ -12,11 +12,8 @@ const ApiError = require('../utils/ApiError');
 
 
 const verify_mobile_number = async (req) => {
-
-
   const { mobileNumber } = req.body;
   let user = await User.findOne({ mobileNumber: mobileNumber });
-
   if (!user) {
     user = await User.create({
       mobileNumber: mobileNumber,
@@ -60,9 +57,22 @@ const verify_otp = async (req) => {
 
   return user;
 }
+const verify_otp_get = async (req) => {
+  let otpId = req.otp;
+  let find_otp = await OTP.findById(otpId).select({
+    OTP: 0,
+    token: 0,
+    used: 0,
+    userId: 0,
+    active: 0,
+    userType: 0,
+    _id: 0,
+  });
+  return find_otp;
+}
 
 const get_user_deatils = async (req) => {
   let user = await User.findById(req.userId)
   return user;
 }
-module.exports = { createUserDetails, verify_mobile_number, verify_otp, get_user_deatils };
+module.exports = { createUserDetails, verify_mobile_number, verify_otp, get_user_deatils, verify_otp_get };
