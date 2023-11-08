@@ -4,7 +4,7 @@ const httpStatus = require('http-status');
 const config = require('../config/config');
 const { User, Counsellor, OTP } = require('../models/userDetails.model');
 const { Otp } = require("./otp.service")
-
+const AWS = require('aws-sdk');
 const ApiError = require('../utils/ApiError');
 
 
@@ -53,4 +53,56 @@ const get_user_deatils = async (req) => {
   let user = await Counsellor.findById(req.userId);
   return user;
 }
-module.exports = { verify_mobile_number, verify_otp, get_user_deatils };
+
+const verify_otp_get = async (req) => {
+  let otpId = req.otp;
+  let find_otp = await OTP.findById(otpId).select({
+    OTP: 0,
+    token: 0,
+    used: 0,
+    userId: 0,
+    active: 0,
+    userType: 0,
+    _id: 0,
+  });
+  return find_otp;
+}
+
+const upload_image_idproof = async (req) => {
+  if (req.file != null) {
+    const s3 = new AWS.S3({
+      accessKeyId: 'AKIA3323XNN7Y2RU77UG',
+      secretAccessKey: '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',
+      region: 'ap-south-1',
+    });
+    let params = {
+      Bucket: 'anti-stress',
+      Key: req.file.originalname,
+      Body: req.file.buffer,
+    };
+    let counsellor;
+    return new Promise((resolve) => {
+      s3.upload(params, async (err, data) => {
+        if (err) {
+        }
+        counsellor = await Counsellor.findByIdAndUpdate({ _id: req.userId }, { idProof: data.Location }, { new: true });
+        resolve({ teaser: 'success', counsellor });
+      });
+    });
+  } else {
+    return { message: 'Invalid' };
+  }
+
+}
+
+
+const update_user_deatils = async (req) => {
+  let user = await Counsellor.findById(req.userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid Access');
+  }
+  user = await Counsellor.findByIdAndUpdate({ _id: user._id }, { ...req.body, ...{ info_collected: true } }, { new: true });
+  return user;
+}
+
+module.exports = { verify_mobile_number, verify_otp, get_user_deatils, verify_otp_get, upload_image_idproof, update_user_deatils };
