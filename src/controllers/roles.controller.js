@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const  RolesService  = require('../services/roles.sservice');
+const RolesService = require('../services/roles.sservice');
 
 const createRoles = catchAsync(async (req, res) => {
   const roles = await RolesService.createRoles(req.body);
@@ -39,7 +39,7 @@ const getusermenus = catchAsync(async (req, res) => {
 });
 
 const updateRolesById = catchAsync(async (req, res) => {
-  const role = await RolesService.updateRolesById(req.params.roleId, req.body);
+  const role = await RolesService.updateRolesById(req.params.roleId, req.body.menus);
   res.send(role);
 });
 
