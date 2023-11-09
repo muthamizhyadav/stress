@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { menuesService } = require('../services');
+const  menuesService  = require('../services/menue.service');
 
 const createMenues = catchAsync(async (req, res) => {
   const menue = await menuesService.createMenues(req.body);
