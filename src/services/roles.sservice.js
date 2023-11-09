@@ -91,10 +91,10 @@ const updateRolesById = async (roleId, updateBody) => {
       await MenueAssign.create({
         rolesId: roleId,
         menuid: e.menuid,
-        read: e.read ,
-        write: e.write,
-        update: e.update,
-        delete: e.delete,
+        read: e.read == null ? false : true,
+        write: e.write == null ? false : true,
+        update: e.update == null ? false : true,
+        delete: e.delete == null ? false : true,
         point: e.point,
       })
     }
