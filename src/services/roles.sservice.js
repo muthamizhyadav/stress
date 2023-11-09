@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Roles } = require('../models');
+const { Roles } = require('../models/roles.model');
 const MenueAssign = require('../models/menuAssign.model');
 const ApiError = require('../utils/ApiError');
 const Menu = require('../models/menues.model');
