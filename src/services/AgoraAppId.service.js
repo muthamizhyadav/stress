@@ -105,7 +105,7 @@ const get_all_token_check = async (req) => {
   let page = req.query.page == '' || req.query.page == null || req.query.page == null ? 0 : parseInt(req.query.page);
   // await AgoraAppId.updateMany({ cloud_KEY: { $ne: null } }, { $set: { verifyStatus: "Pending", active: true } }, { new: true })
   let appId = await AgoraAppId.aggregate([
-    { $match: { $and: [{ verifyStatus: { $in: [null, 'Pending'] } }] } },
+    { $match: { $and: [{ verifyStatus: { $in: [null, 'pending'] } }] } },
     {
       $skip: 20 * parseInt(page),
     },
@@ -114,7 +114,7 @@ const get_all_token_check = async (req) => {
     },
   ])
   let next = await AgoraAppId.aggregate([
-    { $match: { $and: [{ verifyStatus: { $in: [null, 'Pending'] } }] } },
+    { $match: { $and: [{ verifyStatus: { $in: [null, 'pending'] } }] } },
     {
       $skip: 20 * (parseInt(page) + 1),
     },
