@@ -6,5 +6,6 @@ const authorization = require('../../controllers/tokenVerify.controller');
 
 router.post('/', b2bUsersController.createB2bUsers);
 router.post('/login', b2bUsersController.B2bUsersLogin);
+router.get('/All/:page', b2bUsersController.getAllUsers);
 
 module.exports = router;
