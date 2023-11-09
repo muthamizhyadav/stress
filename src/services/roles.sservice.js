@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const { Roles } = require('../models/roles.model');
 const MenueAssign = require('../models/menuAssign.model');
 const ApiError = require('../utils/ApiError');
-const Menu = require('../models/menues.model');
+const { Menues } = require('../models/menues.model');
 const moment = require('moment');
 
 const createRoles = async (rolesBody) => {
@@ -39,7 +39,7 @@ const getMenu = async (id) => {
   // if (!role) {
   //   throw new ApiError(httpStatus.NOT_FOUND, 'Roles  Not Found');
   // }
-  let menues = await Menu.aggregate([
+  let menues = await Menues.aggregate([
     {
       $lookup: {
         from: 'menueassigns',
@@ -531,7 +531,7 @@ const getsalesman = async () => {
         as: 'b2bshopclones_re_da',
       },
     },
-    
+
     {
       $lookup: {
         from: 'b2bshopclones',
@@ -787,7 +787,7 @@ const getAllSalesmanShops = async () => {
 };
 
 const get_user_menu = async (userRole) => {
-  let menus = await Menu.aggregate([
+  let menus = await Menues.aggregate([
     {
       $match: { parentMenu: "0" }
     },
@@ -872,12 +872,12 @@ const get_user_menu = async (userRole) => {
         delete: "$menueassigns.delete",
         point: "$menueassigns.point",
         child: "$menueassigns.menues",
-        createdDate:1
+        createdDate: 1
       }
     },
     {
       $sort: {
-        createdDate:1,
+        createdDate: 1,
         point: 1,
       }
     }
