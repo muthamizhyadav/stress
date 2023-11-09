@@ -29,4 +29,4 @@ menueSchema.plugin(toJSON);
 menueSchema.plugin(paginate);
 const Menues = mongoose.model('Menues', menueSchema);
 
-module.exports = Menues;
+module.exports = {Menues};
