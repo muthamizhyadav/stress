@@ -87,15 +87,17 @@ const updateRolesById = async (roleId, updateBody) => {
   }
   updateBody.forEach(async (e) => {
     //console.log(e)
-    await MenueAssign.create({
-      rolesId: roleId,
-      menuid: e.menuid,
-      read: e.read == null ? false : true,
-      write: e.write == null ? false : true,
-      update: e.update == null ? false : true,
-      delete: e.delete == null ? false : true,
-      point: e.point,
-    })
+    if (e.read || e.write || e.update || e.delete) {
+      await MenueAssign.create({
+        rolesId: roleId,
+        menuid: e.menuid,
+        read: e.read ,
+        write: e.write,
+        update: e.update,
+        delete: e.delete,
+        point: e.point,
+      })
+    }
   })
   return updateBody;
 };
