@@ -6,7 +6,6 @@ const { UserAuth, verifyOTP } = require("../../controllers/userauth.controller")
 
 
 router.route('/create/stream').post(UserAuth, streamrequerst.create_stream_request);
-router.route('/create/stream').post(UserAuth, streamrequerst.create_stream_request);
 
 
 
