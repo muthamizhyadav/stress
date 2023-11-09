@@ -119,6 +119,10 @@ const counselorSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    info_collected: {
+      type: Boolean,
+      default: false
+    },
   },
   { timestamps: true }
 );
