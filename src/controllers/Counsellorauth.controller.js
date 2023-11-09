@@ -49,5 +49,26 @@ const CounsellorOTP = async (req, res, next) => {
   }
 };
 
+const verifyOTP = async (req, res, next) => {
+  const token = req.headers['otptoken'];
+  if (!token) {
+    return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access set');
+  }
+  try {
+    const payload = jwt.verify(token, config.jwt.secret);
+    console.log(payload, 2342)
+    const userss = await Counsellor.findById(payload['userId']);
+    if (!userss) {
+      return res.send(httpStatus.UNAUTHORIZED, 'User Not Found');
+    }
 
-module.exports = { CounsellorAuth, CounsellorOTP };
+    req.userId = payload['userId'];
+    req.otp = payload['id'];
+    return next();
+  } catch {
+    return res.send(httpStatus.BAD_GATEWAY, 'Otp Expired');
+  }
+};
+
+
+module.exports = { CounsellorAuth, CounsellorOTP, verifyOTP };
