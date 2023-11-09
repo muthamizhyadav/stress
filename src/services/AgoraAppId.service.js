@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
-const ApiError = require('../../utils/ApiError');
+const ApiError = require('../utils/ApiError');
 const moment = require('moment');
-const { AgoraAppId, UsageAppID, TestAgora } = require('../../models/AgoraAppId.model');
+const { AgoraAppId, UsageAppID, TestAgora } = require('../models/AgoraAppId.model');
 const Agora = require('agora-access-token');
 const axios = require('axios');
 

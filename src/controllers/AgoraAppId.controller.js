@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
-const catchAsync = require('../../utils/catchAsync');
-const AgoraAppId = require('../../services/AgoraAppId.service');
+const catchAsync = require('../utils/catchAsync');
+const AgoraAppId = require('../services/AgoraAppId.service');
 
 
 const InsertAppId = catchAsync(async (req, res) => {
