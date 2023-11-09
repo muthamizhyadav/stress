@@ -6,6 +6,8 @@ const config = require('../../config/config');
 const agoraRoute = require('./AgoraAppId.route');
 const userDetails = require('./userDetails.route');
 const Counsellor = require('./Counsellor.route');
+const b2buser = require('./B2Busers.route');
+const role = require('./role.route');
 const router = express.Router();
 
 const defaultRoutes = [
@@ -29,6 +31,16 @@ const defaultRoutes = [
     path: '/counsellor',
     route: Counsellor,
   },
+  {
+    path: '/b2bUsers',
+    route: b2buser,
+  },
+   {
+    path: '/role',
+    route: role,
+  },
+
+  
 ];
 
 const devRoutes = [
