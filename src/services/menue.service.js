@@ -1,7 +1,6 @@
 const httpStatus = require('http-status');
 const { Menues } = require('../models/menues.model');
 const ApiError = require('../utils/ApiError');
-const scvPurchase = require('../models/scv.Purchase.model');
 
 const createMenues = async (menueBody) => {
   const { parentMenu } = menueBody;
@@ -14,7 +13,7 @@ const createMenues = async (menueBody) => {
   }
   let values = {};
   values = { ...menueBody, ...{ parentName: parentName } };
-  return Menues.create(values);
+  return await Menues.create(values);
 };
 const getMenuesById = async (id) => {
   return Menues.findById(id);
