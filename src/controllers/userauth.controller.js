@@ -7,15 +7,11 @@ const ApiError = require('../utils/ApiError');
 
 const UserAuth = async (req, res, next) => {
   const token = req.headers.auth;
-
-  console.log(token)
-  // console.log(token)
   if (!token) {
     return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access set');
   }
   try {
     const payload = jwt.verify(token, config.jwt.secret);
-    console.log(payload)
     const userss = await User.findById(payload['userId']);
     if (!userss) {
       return res.send(httpStatus.UNAUTHORIZED, 'User Not Found');
@@ -25,11 +21,6 @@ const UserAuth = async (req, res, next) => {
     }
     req.userId = payload['userId'];
     req.timeline = payload.timeline;
-    // if (userss.mainSeller == 'admin') {
-    //   req.accessBy = userss._id;
-    // } else {
-    //   req.accessBy = userss.mainSeller;
-    // }
     return next();
   } catch {
     return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access val');

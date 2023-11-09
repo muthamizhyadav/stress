@@ -6,6 +6,7 @@ const config = require('../../config/config');
 const agoraRoute = require('./AgoraAppId.route');
 const userDetails = require('./userDetails.route');
 const Counsellor = require('./Counsellor.route');
+const stream = require('./stream.route');
 const router = express.Router();
 
 const defaultRoutes = [
@@ -28,6 +29,10 @@ const defaultRoutes = [
   {
     path: '/counsellor',
     route: Counsellor,
+  },
+  {
+    path: '/stream',
+    route: stream,
   },
 ];
 
