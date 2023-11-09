@@ -33,4 +33,4 @@ rolesSchema.plugin(toJSON);
 rolesSchema.plugin(paginate);
 const Roles = mongoose.model('Roles', rolesSchema);
 
-module.exports = Roles;
+module.exports = { Roles };
