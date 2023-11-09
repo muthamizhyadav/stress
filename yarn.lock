@@ -2996,6 +2996,11 @@
     "path-type" "^4.0.0"
     "yaml" "^1.10.0"
 
+"country-state-city@^3.2.1":
+  "integrity" "sha512-kxbanqMc6izjhc/EHkGPCTabSPZ2G6eG4/97akAYHJUN4stzzFEvQPZoF8oXDQ+10gM/O/yUmISCR1ZVxyb6EA=="
+  "resolved" "https://registry.npmjs.org/country-state-city/-/country-state-city-3.2.1.tgz"
+  "version" "3.2.1"
+
 "coveralls@^3.0.7":
   "integrity" "sha512-+dxnG2NHncSD1NrqbSM3dn/lE57O6Qf/koe9+I7c+wzkqRmEvcp0kgJdxKInzYzkICKkFMZsX3Vct3++tsF9ww=="
   "resolved" "https://registry.npmjs.org/coveralls/-/coveralls-3.1.1.tgz"
