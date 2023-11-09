@@ -5,10 +5,6 @@ const tokenService = require('../services/token.service');
 
 const createB2bUsers = catchAsync(async (req, res) => {
   const users = await b2bUsersService.createUser(req.body);
-  if (!users) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'users Not Fount');
-  }
- 
   res.status(httpStatus.CREATED).send(users);
 });
 
