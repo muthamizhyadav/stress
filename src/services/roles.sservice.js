@@ -95,7 +95,7 @@ const updateRolesById = async (roleId, updateBody) => {
         write: e.write == null ? false : e.write,
         update: e.update == null ? false : e.update,
         delete: e.delete == null ? false : e.delete,
-        point: e.point,
+        point: e.point==null?100:e.point,
       })
     }
   })
