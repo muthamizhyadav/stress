@@ -92,9 +92,9 @@ const updateRolesById = async (roleId, updateBody) => {
         rolesId: roleId,
         menuid: e.menuid,
         read: e.read == null ? false : e.read,
-        write: e.write == null ? false : e.read,
-        update: e.update == null ? false : e.read,
-        delete: e.delete == null ? false : e.read,
+        write: e.write == null ? false : e.write,
+        update: e.update == null ? false : e.update,
+        delete: e.delete == null ? false : e.delete,
         point: e.point,
       })
     }
