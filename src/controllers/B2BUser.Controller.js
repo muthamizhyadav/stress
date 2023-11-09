@@ -8,10 +8,7 @@ const createB2bUsers = catchAsync(async (req, res) => {
   if (!users) {
     throw new ApiError(httpStatus.NOT_FOUND, 'users Not Fount');
   }
-  await ManageSalary.createManageSalary({
-    userid: users.id,
-    salary: req.body.salary,
-  });
+ 
   res.status(httpStatus.CREATED).send(users);
 });
 
