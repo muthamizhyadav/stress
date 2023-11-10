@@ -54,7 +54,13 @@ const userSchema = new mongoose.Schema(
     },
     languages: {
       type: Array,
-    }
+    },
+    long: {
+      type: Number,
+    },
+    lat: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );
@@ -85,25 +91,7 @@ const counselorSchema = new mongoose.Schema(
     languageKnown: {
       type: Array,
     },
-    neighbourContact: {
-      type: String,
-    },
-    favouritePersion: {
-      type: String,
-    },
-    addContact: {
-      type: String,
-    },
-    universityName: {
-      type: String,
-    },
-    instituteName: {
-      type: String,
-    },
     idProof: {
-      type: String,
-    },
-    nameOfHospital: {
       type: String,
     },
     state: {
@@ -122,6 +110,21 @@ const counselorSchema = new mongoose.Schema(
     info_collected: {
       type: Boolean,
       default: false
+    },
+    professionname: {
+      type: String,
+    },
+    univercityName: {
+      type: String,
+    },
+    professionname: {
+      type: String,
+    },
+    long: {
+      type: Number,
+    },
+    lat: {
+      type: Number,
     },
   },
   { timestamps: true }
