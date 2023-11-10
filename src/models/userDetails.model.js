@@ -61,6 +61,9 @@ const userSchema = new mongoose.Schema(
     lat: {
       type: Number,
     },
+    location: {
+      type: String,
+    }
   },
   { timestamps: true }
 );
