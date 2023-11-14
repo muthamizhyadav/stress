@@ -6,17 +6,20 @@ const { Stream, Token } = require('../models/stream.model');
 const { Otp } = require("./otp.service")
 const AWS = require('aws-sdk');
 const ApiError = require('../utils/ApiError');
-
-const { RtcTokenBuilder, RtcRole } = require('agora-access-token');
 const Agora = require('agora-access-token');
-
-
+const appID = 'e1838e4a64e348f8b5ebe8deeff37281';
+const appCertificate = 'b0c21c32605f47f8b2228ec8494faa3d';
 
 const create_stream_request = async (req) => {
-  let moment_curr = moment();
-  const currentTimestamp = moment_curr.add(15, 'minutes');
-  const expirationTimestamp = currentTimestamp / 1000;
-  const role = Agora.RtcRole.PUBLISHER;
+  // let moment_curr = moment();
+  // const currentTimestamp = moment_curr.add(1000, 'minutes');
+  // const expirationTimestamp = currentTimestamp / 1000;
+  const moment_curr = moment();
+  const currentTimestamp = moment_curr.add(600, 'minutes');
+  const expirationTimestamp =
+    new Date(new Date(currentTimestamp.format('YYYY-MM-DD') + ' ' + currentTimestamp.format('HH:mm:ss'))).getTime() / 1000;
+  console.log(expirationTimestamp, 9878979)
+  const role = Agora.RtcRole.SUBSCRIBER;
   const uid = await generateUid();
   let stream = await Stream.create({
     chennal: req.userId,
@@ -25,7 +28,9 @@ const create_stream_request = async (req) => {
     startTime: moment(),
     endTime: currentTimestamp,
   });
-  let tokens = await geenerate_rtc_token(stream._id, uid, role, expirationTimestamp);
+  console.log(stream, 78676832)
+  console.log(stream._id, uid, role, expirationTimestamp)
+  let tokens = await geenerate_rtc_token(stream._id, uid, 1, expirationTimestamp);
 
   let token = await Token.create({
     type: "host",
@@ -46,7 +51,8 @@ const generateUid = async (req) => {
 
 
 const geenerate_rtc_token = async (chennel, uid, role, expirationTimestamp) => {
-  return Agora.RtcTokenBuilder.buildTokenWithUid("84d6325953e84954b34ec3c8dfd05b47", "cfae9d54b3e84d85b13b8ec6d67ed200", chennel, uid, role, expirationTimestamp);
+  return Agora.RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, chennel, uid, role, expirationTimestamp);
+  // return Agora.RtcTokenBuilder.buildTokenWithUid("3a9e3f2cf6e44c9bb48dcc932a59d5d8", "3004174acdfb44fd81372f86b711eca0", chennel, uid, role, expirationTimestamp);
 };
 
 const get_stresscall_details_requestt = async (req) => {
@@ -93,7 +99,7 @@ const get_stresscall_details_requestt = async (req) => {
       }
     }
   ])
-  return stream;
+  return stream[0];
 };
 
 
