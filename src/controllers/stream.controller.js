@@ -10,7 +10,14 @@ const create_stream_request = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const get_stresscall_details_request = catchAsync(async (req, res) => {
+  const data = await streamrequerst.get_stresscall_details_requestt(req);
+  res.send(data);
+});
+
+
 
 module.exports = {
-  create_stream_request
+  create_stream_request,
+  get_stresscall_details_request
 };

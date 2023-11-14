@@ -83,6 +83,9 @@ const tokenSchema = new mongoose.Schema(
     },
     chennal: {
       type: String,
+    },
+    store: {
+      type: String,
     }
   },
   { timestamps: true }
