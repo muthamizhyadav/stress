@@ -88,7 +88,8 @@ const get_stresscall_details_requestt = async (req) => {
         endTime: 1,
         token: "$streamtokens.token",
         uid: "$streamtokens.uid",
-        chennal: "$chennal.chennal"
+        chennal: "$streamtokens.chennal",
+        store: "$streamtokens.store",
       }
     }
   ])
