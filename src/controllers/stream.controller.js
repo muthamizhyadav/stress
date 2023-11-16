@@ -15,9 +15,28 @@ const get_stresscall_details_request = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const connect_counsellor_request = catchAsync(async (req, res) => {
+  const data = await streamrequerst.connect_counsellor_request(req);
+  res.send(data);
+});
+
+const get_connect_counsellor_request = catchAsync(async (req, res) => {
+  const data = await streamrequerst.get_connect_counsellor_request(req);
+  res.send(data);
+});
+
+
+const get_counsellor_streaming_list = catchAsync(async (req, res) => {
+  const data = await streamrequerst.get_counsellor_streaming_list(req);
+  res.send(data);
+});
+
 
 
 module.exports = {
   create_stream_request,
-  get_stresscall_details_request
+  get_stresscall_details_request,
+  get_counsellor_streaming_list,
+  connect_counsellor_request,
+  get_connect_counsellor_request
 };
