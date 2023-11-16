@@ -25,6 +25,12 @@ const StreamSchema = new mongoose.Schema(
     },
     agoraID: {
       type: String,
+    },
+    store: {
+      type: String,
+    },
+    status: {
+      type: String
     }
   },
   { timestamps: true }
@@ -84,9 +90,7 @@ const tokenSchema = new mongoose.Schema(
     chennal: {
       type: String,
     },
-    store: {
-      type: String,
-    }
+
   },
   { timestamps: true }
 );
