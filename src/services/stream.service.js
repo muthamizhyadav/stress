@@ -23,7 +23,7 @@ const create_stream_request = async (req) => {
     actualEndTime: currentTimestamp,
     startTime: moment(),
     endTime: currentTimestamp,
-    status:"Pending"
+    status: "Pending"
   });
   let tokens = await geenerate_rtc_token(stream._id, uid, 1, expirationTimestamp);
   stream.store = stream._id.replace(/[^a-zA-Z0-9]/g, '');
@@ -37,7 +37,98 @@ const create_stream_request = async (req) => {
     userId: req.userId
   });
   return { token, stream };
+  await production_supplier_token_cloudrecording(stream._id);
 };
+
+
+
+const production_supplier_token_cloudrecording = async (id) => {
+  let streamId = id;
+  // let agoraToken = await AgoraAppId.findById(agroaID)
+  let stream = await Stream.findById(streamId);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+  // console.log(stream);
+  value = await Token.findOne({ chennal: streamId, type: 'cloud', recoredStart: { $in: ["query", 'start',] } });
+  if (!value) {
+    const uid = await generateUid();
+    const role = Agora.RtcRole.SUBSCRIBER;
+    const expirationTimestamp = stream.endTime / 1000;
+    value = await Token.create({
+      uid: uid,
+      streamId: stream._id,
+      chennal: stream._id,
+      userId: req.userId,
+      type: 'cloud',
+    });
+    const token = await geenerate_rtc_token(stream._id, uid, 1, expirationTimestamp);
+    value.token = token;
+    value.store = stream._id.replace(/[^a-zA-Z0-9]/g, '');
+    value.save();
+    if (value.videoLink == '' || value.videoLink == null) {
+      await agora_acquire(value._id, stream);
+    }
+  } else {
+    let token = value;
+    const resource = token.resourceId;
+    const sid = token.sid;
+    const mode = 'mix';
+    const Authorization = `Basic ${Buffer.from('43a9dd30a7d4445b99ad8b61c32fb35b:bdaaed037ba94837be16c8c93c884ddc').toString(
+      'base64'
+    )}`;
+    await axios.get(
+      `https://api.agora.io/v1/apps/${appID}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/query`,
+      { headers: { Authorization } }
+    ).then((res) => {
+
+    }).catch(async (error) => {
+      await Token.findByIdAndUpdate({ _id: value._id }, { recoredStart: "stop" }, { new: true });
+      const uid = await generateUid();
+      const role = Agora.RtcRole.SUBSCRIBER;
+      const expirationTimestamp = stream.endTime / 1000;
+      value = await Token.create({
+        uid: uid,
+        streamId: stream._id,
+        chennal: stream._id,
+        userId: req.userId,
+        type: 'cloud',
+
+      });
+      const token = await geenerate_rtc_token(stream._id, uid, 1, expirationTimestamp);
+      value.token = token;
+      value.store = stream._id.replace(/[^a-zA-Z0-9]/g, '');
+      value.save();
+      await agora_acquire(value._id, stream);
+    });
+  }
+  return value;
+};
+
+
+const agora_acquire = async (id, stream) => {
+  let temtoken = id;
+  let token = await Token.findById(temtoken);
+  const Authorization = `Basic ${Buffer.from('43a9dd30a7d4445b99ad8b61c32fb35b:bdaaed037ba94837be16c8c93c884ddc').toString(
+    'base64'
+  )}`;
+  const acquire = await axios.post(
+    `https://api.agora.io/v1/apps/${appID.replace(/\s/g, '')}/cloud_recording/acquire`,
+    {
+      cname: token.chennel,
+      uid: token.Uid.toString(),
+      clientRequest: {
+        resourceExpiredHour: 24,
+        scene: 0,
+      },
+    },
+    { headers: { Authorization } }
+  );
+  token.resourceId = acquire.data.resourceId;
+  token.recoredStart = 'acquire';
+  token.save();
+};
+
 
 const connect_counsellor_request = async (req) => {
   let userId = req.userId;
