@@ -36,8 +36,8 @@ const create_stream_request = async (req) => {
     chennal: stream._id,
     userId: req.userId
   });
-  return { token, stream };
   await production_supplier_token_cloudrecording(stream._id);
+  return { token, stream };
 };
 
 
@@ -59,7 +59,7 @@ const production_supplier_token_cloudrecording = async (id) => {
       uid: uid,
       streamId: stream._id,
       chennal: stream._id,
-      userId: req.userId,
+      userId: stream.userId,
       type: 'cloud',
     });
     const token = await geenerate_rtc_token(stream._id, uid, 1, expirationTimestamp);
@@ -91,7 +91,7 @@ const production_supplier_token_cloudrecording = async (id) => {
         uid: uid,
         streamId: stream._id,
         chennal: stream._id,
-        userId: req.userId,
+        userId: stream.userId,
         type: 'cloud',
 
       });
