@@ -13,8 +13,13 @@ const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
+const initSocketService = require('./socket.io/socket.service');
+const logger = require('./config/logger');
+
+
 
 const app = express();
+
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
@@ -45,6 +50,17 @@ app.options('*', cors());
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
 
+
+const socketIO = require('socket.io');
+let http = require('http');
+let server = http.Server(app);
+const io = socketIO(server);
+app.use(function (req, res, next) {
+  req.io = io;
+  next();
+});
+
+
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
@@ -63,5 +79,15 @@ app.use(errorConverter);
 
 // handle error
 app.use(errorHandler);
+
+
+server.listen(config.port, () => {
+  logger.info(`Listening to port ${config.port}`);
+});
+
+
+
+initSocketService(server, io);
+
 
 module.exports = app;

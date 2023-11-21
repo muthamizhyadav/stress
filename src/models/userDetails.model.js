@@ -61,7 +61,7 @@ const userSchema = new mongoose.Schema(
     lat: {
       type: Number,
     },
-   
+
   },
   { timestamps: true }
 );
@@ -129,7 +129,10 @@ const counselorSchema = new mongoose.Schema(
     },
     location: {
       type: String,
-    }
+    },
+    languages: {
+      type: Array,
+    },
   },
   { timestamps: true }
 );
