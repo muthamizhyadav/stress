@@ -31,6 +31,9 @@ const StreamSchema = new mongoose.Schema(
     },
     status: {
       type: String
+    },
+    languages: {
+      type: Array
     }
   },
   { timestamps: true }
