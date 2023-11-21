@@ -14,6 +14,7 @@ router.route('/get/counsellor/streaming/list').get(CounsellorAuth, streamrequers
 
 router.route('/start/cloud').get(UserAuth, streamrequerst.start_cloud_recording);
 router.route('/stop/cloud').get(UserAuth, streamrequerst.stop_cloud_recording);
+router.route('/stream/end').get(UserAuth, streamrequerst.stream_end);
 
 
 module.exports = router;

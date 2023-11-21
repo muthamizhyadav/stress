@@ -30,7 +30,8 @@ const StreamSchema = new mongoose.Schema(
       type: String,
     },
     status: {
-      type: String
+      type: String,
+      default: "Online"
     },
     languages: {
       type: Array

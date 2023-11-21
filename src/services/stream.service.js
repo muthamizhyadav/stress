@@ -41,7 +41,7 @@ const create_stream_request = async (req) => {
     chennal: stream._id,
     userId: req.userId
   });
-  stream = await Stream.aggregate([
+  let streamss = await Stream.aggregate([
     { $match: { $and: [{ _id: { $eq: stream._id } }] } },
     {
       $lookup: {
@@ -64,8 +64,8 @@ const create_stream_request = async (req) => {
     }
   ]);
   counsellor.languages.forEach((lan) => {
-    if (stream.length != 0) {
-      req.io.emit(lan + "_language", stream[0]);
+    if (streamss.length != 0) {
+      req.io.emit(lan + "_language", streamss[0]);
     }
 
   })
@@ -494,6 +494,20 @@ const stop_cloud_recording = async (req) => {
   }
 };
 
+const stream_end = async (req) => {
+
+  let stream = await Stream.findById(req.query.id);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+  stream = await Stream.findByIdAndUpdate({ _id: stream._id }, { endTime: new Date().getTime(), status: "End" }, { new: true });
+  stream.languages.forEach((lan) => {
+    req.io.emit(lan + "_language", { streamId: stream._id, status: "End" });
+  })
+  return stream;
+
+}
+
 module.exports = {
   create_stream_request,
   get_stresscall_details_requestt,
@@ -501,5 +515,6 @@ module.exports = {
   connect_counsellor_request,
   get_connect_counsellor_request,
   start_cloud_recording,
-  stop_cloud_recording
+  stop_cloud_recording,
+  stream_end
 };

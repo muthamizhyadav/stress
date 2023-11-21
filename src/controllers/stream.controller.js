@@ -44,6 +44,12 @@ const stop_cloud_recording = catchAsync(async (req, res) => {
 });
 
 
+const stream_end = catchAsync(async (req, res) => {
+  const data = await streamrequerst.stream_end(req);
+  res.send(data);
+});
+
+
 
 module.exports = {
   create_stream_request,
@@ -52,5 +58,6 @@ module.exports = {
   connect_counsellor_request,
   get_connect_counsellor_request,
   start_cloud_recording,
-  stop_cloud_recording
+  stop_cloud_recording,
+  stream_end
 };
