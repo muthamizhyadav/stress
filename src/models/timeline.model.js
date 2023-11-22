@@ -31,6 +31,10 @@ const timelineSchema = new mongoose.Schema(
     },
     device: {
       type: Object,
+    },
+    status: {
+      type: String,
+      default: "active",
     }
   },
   { timestamps: true }

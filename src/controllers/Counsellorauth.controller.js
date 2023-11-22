@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const { Counsellor } = require('../models/userDetails.model');
+const { Timeline } = require('../models/timeline.model');
 const ApiError = require('../utils/ApiError');
 
 
@@ -21,7 +22,14 @@ const CounsellorAuth = async (req, res, next) => {
     }
     req.userId = payload['userId'];
     req.timeline = payload.timeline;
-    return next();
+
+    let timeline = await Timeline.findById(payload.timeline);
+    if (timeline.status == 'active') {
+      return next();
+    }
+    else {
+      return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access val');
+    }
   } catch {
     return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access val');
   }
