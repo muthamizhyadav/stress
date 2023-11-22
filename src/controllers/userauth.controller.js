@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const { User } = require('../models/userDetails.model');
 const ApiError = require('../utils/ApiError');
+const { Timeline } = require('../models/timeline.model');
 
 
 const UserAuth = async (req, res, next) => {
@@ -21,6 +22,18 @@ const UserAuth = async (req, res, next) => {
     }
     req.userId = payload['userId'];
     req.timeline = payload.timeline;
+    let timeline = await Timeline.findById(payload.timeline);
+    if (timeline) {
+      if (timeline.status == 'active') {
+        return next();
+      }
+      else {
+        return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access val');
+      }
+    }
+    else {
+      return next();
+    }
     return next();
   } catch {
     return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access val');
