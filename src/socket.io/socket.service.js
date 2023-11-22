@@ -3,7 +3,7 @@
 const authcheck = require("./authcheck.service.io");
 
 function initSocketService(server, io) {
-  
+
     io.use(async (socket, next) => {
         const token = socket.handshake.auth.token;
         // console.log(token)
@@ -15,7 +15,8 @@ function initSocketService(server, io) {
         }
     })
     io.on('connection', (socket) => {
-        console.log('A user connected', socket.name, socket.mobileNumber);
+        
+        console.log('A user connected', socket.name, socket.mobileNumber, socket.id);
         socket.on('chat message', (msg) => {
             io.emit('chat message', msg);
         });
@@ -26,8 +27,6 @@ function initSocketService(server, io) {
             console.log('User disconnected');
         });
     });
-
-
     return io;
 }
 

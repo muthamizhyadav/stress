@@ -15,7 +15,7 @@ const timelineSchema = new mongoose.Schema(
       type: String,
     },
     type: {
-      type: Number
+      type: String
     },
     socketId: {
       type: String,
@@ -24,10 +24,10 @@ const timelineSchema = new mongoose.Schema(
       type: String,
     },
     Start: {
-      type: String,
+      type: Number,
     },
     End: {
-      type: String,
+      type: Number,
     },
     device: {
       type: Object,
@@ -37,9 +37,6 @@ const timelineSchema = new mongoose.Schema(
 );
 
 const Timeline = mongoose.model('timeline', timelineSchema);
-
-
-
 
 module.exports = {
   Timeline,

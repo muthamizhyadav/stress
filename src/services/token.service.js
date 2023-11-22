@@ -15,7 +15,7 @@ const { tokenTypes } = require('../config/tokens');
  * @param {string} [secret]
  * @returns {string}
  */
-const generateToken = (userId, expires, type, name, mobileNumber, timeline, secret = config.jwt.secret) => {
+const generateToken = (userId, expires, type, name, mobileNumber, timeline, savetokens, secret = config.jwt.secret) => {
   const payload = {
     sub: userId,
     iat: moment().unix(),
@@ -24,7 +24,8 @@ const generateToken = (userId, expires, type, name, mobileNumber, timeline, secr
     userId: userId,
     name,
     mobileNumber,
-    timeline
+    timeline,
+    tokenID: savetokens
   };
   return jwt.sign(payload, secret);
 };
@@ -72,13 +73,17 @@ const verifyToken = async (token, type) => {
  */
 const generateAuthTokens = async (user, timeline) => {
   console.log(user)
-  const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'days');
-  const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS, user.name, user.mobileNumber, timeline._id);
 
+  let refreshToken;
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  const refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH, user.name, user.mobileNumber, timeline._id);
   let savetokens = await saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH, timeline._id);
 
+  const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'days');
+  const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS, user.name, user.mobileNumber, timeline._id, savetokens._id);
+
+  refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH, user.name, user.mobileNumber, timeline._id, savetokens._id);
+  savetokens.refreshToken = refreshToken;
+  savetokens.save();
   return {
     access: {
       token: accessToken,

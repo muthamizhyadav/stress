@@ -7,7 +7,7 @@ const ApiError = require('../utils/ApiError');
 
 
 const createTimeline = async (user, role, deviceInfo) => {
-  let data = { userId: user._id, type: role, device: deviceInfo }
+  let data = { userId: user._id, type: role, device: deviceInfo, Start: moment() }
   let val = await Timeline.create(data);
   return val;
 };
