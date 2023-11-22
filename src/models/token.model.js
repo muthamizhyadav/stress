@@ -6,7 +6,6 @@ const tokenSchema = mongoose.Schema(
   {
     token: {
       type: String,
-      required: true,
     },
     user: {
       type: String,
@@ -26,6 +25,9 @@ const tokenSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    timeline: {
+      type: String,
+    }
   },
   {
     timestamps: true,
