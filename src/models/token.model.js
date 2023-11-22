@@ -26,6 +26,9 @@ const tokenSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    timeline: {
+      type: String,
+    }
   },
   {
     timestamps: true,

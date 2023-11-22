@@ -15,7 +15,7 @@ const { tokenTypes } = require('../config/tokens');
  * @param {string} [secret]
  * @returns {string}
  */
-const generateToken = (userId, expires, type, name, mobileNumber, secret = config.jwt.secret) => {
+const generateToken = (userId, expires, type, name, mobileNumber, timeline, secret = config.jwt.secret) => {
   const payload = {
     sub: userId,
     iat: moment().unix(),
@@ -23,7 +23,8 @@ const generateToken = (userId, expires, type, name, mobileNumber, secret = confi
     type,
     userId: userId,
     name,
-    mobileNumber
+    mobileNumber,
+    timeline
   };
   return jwt.sign(payload, secret);
 };
@@ -37,12 +38,13 @@ const generateToken = (userId, expires, type, name, mobileNumber, secret = confi
  * @param {boolean} [blacklisted]
  * @returns {Promise<Token>}
  */
-const saveToken = async (token, userId, expires, type, blacklisted = false) => {
+const saveToken = async (token, userId, expires, type, timeline, blacklisted = false) => {
   const tokenDoc = await Token.create({
     token,
     user: userId,
     expires: expires.toDate(),
     type,
+    timeline,
     blacklisted,
   });
   return tokenDoc;
@@ -68,14 +70,14 @@ const verifyToken = async (token, type) => {
  * @param {User} user
  * @returns {Promise<Object>}
  */
-const generateAuthTokens = async (user) => {
+const generateAuthTokens = async (user, timeline) => {
   console.log(user)
   const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'days');
-  const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS, user.name, user.mobileNumber);
+  const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS, user.name, user.mobileNumber, timeline._id);
 
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  const refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH, user.name, user.mobileNumber);
-  await saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH);
+  const refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH, user.name, user.mobileNumber, timeline._id);
+  let savetokens = await saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH, timeline._id);
 
   return {
     access: {
@@ -86,6 +88,7 @@ const generateAuthTokens = async (user) => {
       token: refreshToken,
       expires: refreshTokenExpires.toDate(),
     },
+    savetokens
   };
 };
 

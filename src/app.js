@@ -65,9 +65,18 @@ app.use(function (req, res, next) {
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
+const deviceDetais = async (req, res, next) => {
+  const userAgent = req.headers['user-agent'];
+  const deviceInfo = parseUserAgent(userAgent);
+  // //console.log(deviceInfo)
+  req.deviceInfo = deviceInfo;
+  return next();
+};
+
+
 
 // v1 api routes
-app.use('/v1', routes);
+app.use('/v1', deviceDetais, routes);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {

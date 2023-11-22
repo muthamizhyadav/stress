@@ -5,6 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const UserDetailsService = require('../services/userDetails.service');
 
 const { generateAuthTokens } = require("../services/token.service")
+const { createTimeline } = require("../services/timeline.service")
 
 const createUserDetails = catchAsync(async (req, res) => {
   const data = await UserDetailsService.createUserDetails(req.body);
@@ -19,7 +20,8 @@ const verify_mobile_number = catchAsync(async (req, res) => {
 
 const verify_otp = catchAsync(async (req, res) => {
   const data = await UserDetailsService.verify_otp(req);
-  const token = await generateAuthTokens(data)
+  const timeline = await createTimeline(data, 'clint', req.deviceInfo);
+  const token = await generateAuthTokens(data, timeline);
   res.send(token);
 });
 

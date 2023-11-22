@@ -47,8 +47,6 @@ const verify_otp = async (req) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Already Used');
   }
 
-  console.log(find_otp, 879)
-
   find_otp.used = true;
   find_otp.save();
 
