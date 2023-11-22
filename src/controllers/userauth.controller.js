@@ -26,7 +26,7 @@ const UserAuth = async (req, res, next) => {
     if (timeline) {
       if (timeline.status == 'active') {
         return next();
-      }
+      }  
       else {
         return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access val');
       }
