@@ -15,7 +15,7 @@ function initSocketService(server, io) {
         }
     })
     io.on('connection', (socket) => {
-        
+
         console.log('A user connected', socket.name, socket.mobileNumber, socket.id);
         socket.on('chat message', (msg) => {
             io.emit('chat message', msg);
@@ -24,7 +24,7 @@ function initSocketService(server, io) {
             console.log(msg, 87675654367)
         });
         socket.on('disconnect', () => {
-            console.log('User disconnected');
+            console.log('User disconnected', socket.name, socket.mobileNumber, socket.id);
         });
     });
     return io;
