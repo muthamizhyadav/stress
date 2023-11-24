@@ -14,9 +14,11 @@ const ApiError = require('../utils/ApiError');
 const verify_mobile_number = async (req) => {
   const { mobileNumber } = req.body;
   let user = await User.findOne({ mobileNumber: mobileNumber });
+  console.log(user, mobileNumber)
   if (!user) {
     user = await User.create({
       mobileNumber: mobileNumber,
+      email: ""
     })
   }
   await OTP.updateMany({ mobileNumber: mobileNumber }, { $set: { used: true } }, { new: true })
