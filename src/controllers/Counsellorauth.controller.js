@@ -24,11 +24,16 @@ const CounsellorAuth = async (req, res, next) => {
     req.timeline = payload.timeline;
 
     let timeline = await Timeline.findById(payload.timeline);
-    if (timeline.status == 'active') {
-      return next();
+    if (timeline) {
+      if (timeline.status == 'active') {
+        return next();
+      }
+      else {
+        return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access val');
+      }
     }
     else {
-      return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access val');
+      return next();
     }
   } catch {
     return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access val');
