@@ -60,6 +60,8 @@ const create_stream_request = async (req) => {
         startTime: 1,
         usersName: "$users.name",
         languages: "$users.languages",
+        lastConnect: 1,
+        counseller: 1
       }
     }
   ]);
@@ -166,9 +168,16 @@ const agora_acquire = async (id, stream) => {
 const connect_counsellor_request = async (req) => {
   let userId = req.userId;
   let stream = await Stream.findById(req.body.stream);
+
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream Not Fount');
   }
+  if (stream.counseller == 'yes') {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Another Counseller Onlive');
+  }
+  stream.lastConnect = userId;
+  stream.counseller = 'yes';
+  stream.save();
   let token = await Token.find({ streamId: stream._id, userId: userId }).count();
   if (token == 0) {
     const expirationTimestamp = stream.actualEndTime / 1000
@@ -187,9 +196,56 @@ const connect_counsellor_request = async (req) => {
     token = await Token.find({ streamId: stream._id, userId: userId });
     token = await Token.findById(token[0]._id);
   }
+
+  let streamss = await Stream.aggregate([
+    { $match: { $and: [{ _id: { $eq: stream._id } }] } },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    { $unwind: "$users" },
+    {
+      $project: {
+        _id: 1,
+        actualEndTime: 1,
+        endTime: 1,
+        startTime: 1,
+        usersName: "$users.name",
+        languages: "$users.languages",
+        lastConnect: 1,
+        counseller: 1
+      }
+    }
+  ]);
+  stream.languages.forEach((lan) => {
+    req.io.emit(lan + "_language", streamss[0]);
+  })
   return { token, stream };
 };
 
+
+
+const disconnect_counsellor_request = async (req) => {
+  let userId = req.userId;
+  let stream = await Stream.findById(req.body.stream);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream Not Fount');
+  }
+  if (stream.lastConnect != userId) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Your Not Connected');
+  }
+  stream.lastConnect = null;
+  stream.counseller = 'no';
+  stream.save();
+  stream.languages.forEach((lan) => {
+    req.io.emit(lan + "_language", stream);
+  })
+  return stream;
+};
 
 const generateUid = async (req) => {
   const length = 5;
@@ -321,6 +377,11 @@ const get_counsellor_streaming_list = async (req) => {
     },
     { $unwind: "$users" },
     {
+      $addFields: {
+        connected: { $eq: ['$lastConnect', userId] },
+      },
+    },
+    {
       $project: {
         _id: 1,
         actualEndTime: 1,
@@ -328,6 +389,9 @@ const get_counsellor_streaming_list = async (req) => {
         startTime: 1,
         usersName: "$users.name",
         languages: "$users.languages",
+        lastConnect: 1,
+        counseller: 1,
+        connected:1
       }
     }
   ]);
@@ -501,6 +565,7 @@ const stream_end = async (req) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
   }
   stream = await Stream.findByIdAndUpdate({ _id: stream._id }, { endTime: new Date().getTime(), status: "End" }, { new: true });
+  req.io.emit(stream._id + "_stream_end", { message: "Stream END" });
   stream.languages.forEach((lan) => {
     req.io.emit(lan + "_language", { streamId: stream._id, status: "End" });
   })
@@ -513,6 +578,7 @@ module.exports = {
   get_stresscall_details_requestt,
   get_counsellor_streaming_list,
   connect_counsellor_request,
+  disconnect_counsellor_request,
   get_connect_counsellor_request,
   start_cloud_recording,
   stop_cloud_recording,

@@ -20,6 +20,11 @@ const connect_counsellor_request = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const disconnect_counsellor_request = catchAsync(async (req, res) => {
+  const data = await streamrequerst.disconnect_counsellor_request(req);
+  res.send(data);
+});
+
 const get_connect_counsellor_request = catchAsync(async (req, res) => {
   const data = await streamrequerst.get_connect_counsellor_request(req);
   res.send(data);
@@ -56,6 +61,7 @@ module.exports = {
   get_stresscall_details_request,
   get_counsellor_streaming_list,
   connect_counsellor_request,
+  disconnect_counsellor_request,
   get_connect_counsellor_request,
   start_cloud_recording,
   stop_cloud_recording,

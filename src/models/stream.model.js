@@ -35,6 +35,13 @@ const StreamSchema = new mongoose.Schema(
     },
     languages: {
       type: Array
+    },
+    lastConnect: {
+      type: String,
+    },
+    counseller: {
+      type: String,
+      default: "no"
     }
   },
   { timestamps: true }
