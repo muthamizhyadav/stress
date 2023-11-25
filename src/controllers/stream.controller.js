@@ -63,6 +63,15 @@ const comment_now = catchAsync(async (req, res) => {
 });
 
 
+const get_perviews_comments = catchAsync(async (req, res) => {
+  const data = await streamrequerst.get_perviews_comments(req);
+  res.send(data);
+});
+
+const get_my_comment = catchAsync(async (req, res) => {
+  const data = await streamrequerst.get_my_comment(req);
+  res.send(data);
+});
 module.exports = {
   create_stream_request,
   get_stresscall_details_request,
@@ -73,5 +82,7 @@ module.exports = {
   start_cloud_recording,
   stop_cloud_recording,
   stream_end,
-  comment_now
+  comment_now,
+  get_perviews_comments,
+  get_my_comment
 };

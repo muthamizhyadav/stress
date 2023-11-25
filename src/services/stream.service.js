@@ -584,10 +584,61 @@ const comment_now = async (req) => {
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
   }
+  let comments = await Comments.findOne({ streamId: streamId, counsellerID: userId });
 
-  let comments = await Comments.create({ comment, userId: stream.userId, counsellerID: userId, Date: moment() });
+  if (!comments) {
+    comments = await Comments.create({ streamId, comment, userId: stream.userId, counsellerID: userId, Date: moment() });
+  }
+  else {
+    comments.comment = comment;
+    comments.save();
+  }
+
   return comments;
+}
 
+
+const get_perviews_comments = async (req) => {
+  let stream = await Stream.findById(req.query.id);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+
+  let comments = await Comments.aggregate([
+    { $match: { $and: [{ userId: stream.userId }] } },
+    { $sort: { Date: -1 } },
+    {
+      $lookup: {
+        from: 'counsellors',
+        localField: 'counsellerID',
+        foreignField: '_id',
+        as: 'counsellors',
+      },
+    },
+    { $unwind: "$counsellors" },
+    {
+      $addFields: {
+        counsellerName: "$counsellors.name",
+        languagesName: "$counsellors.languages",
+        this_stream: { $eq: ["$streamId", stream._id] },
+        me: { $eq: ["$counsellerID", stream.counsellerID] },
+      },
+    },
+    { $limit: 10 }
+  ]);
+
+  return comments;
+}
+
+const get_my_comment = async (req) => {
+
+  let userId = req.userId;
+  let stream = await Stream.findById(req.query.id);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+  let comments = await Comments.findOne({ streamId: stream._id, counsellerID: userId });
+  return comments;
 }
 
 
@@ -601,5 +652,7 @@ module.exports = {
   start_cloud_recording,
   stop_cloud_recording,
   stream_end,
-  comment_now
+  comment_now,
+  get_perviews_comments,
+  get_my_comment
 };

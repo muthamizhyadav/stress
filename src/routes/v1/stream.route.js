@@ -21,6 +21,8 @@ router.route('/stream/end').get(UserAuth, streamrequerst.stream_end);
 
 
 router.route('/comment').post(CounsellorAuth, streamrequerst.comment_now);
+router.route('/previews/comment').get(CounsellorAuth, streamrequerst.get_perviews_comments);
+router.route('/comment').get(CounsellorAuth, streamrequerst.get_my_comment);
 
 
 

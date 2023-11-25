@@ -123,7 +123,7 @@ const commentsSchema = new mongoose.Schema(
     counsellerID: {
       type: String,
     },
-    userID: {
+    userId: {
       type: String,
     },
     comment: {
@@ -131,6 +131,9 @@ const commentsSchema = new mongoose.Schema(
     },
     Date: {
       type: Number
+    },
+    streamId: {
+      type: String,
     }
 
   },
