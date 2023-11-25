@@ -109,7 +109,38 @@ const tokenSchema = new mongoose.Schema(
 const Token = mongoose.model('streamtoken', tokenSchema);
 
 
+
+
+
+
+
+const commentsSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: v4,
+    },
+    counsellerID: {
+      type: String,
+    },
+    userID: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+    Date: {
+      type: Number
+    }
+
+  },
+  { timestamps: true }
+);
+
+const Comments = mongoose.model('comment', commentsSchema);
+
 module.exports = {
   Stream,
-  Token
+  Token,
+  Comments
 };

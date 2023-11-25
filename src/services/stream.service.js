@@ -2,14 +2,14 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const httpStatus = require('http-status');
 const config = require('../config/config');
-const { Stream, Token } = require('../models/stream.model');
+const { Stream, Token, Comments } = require('../models/stream.model');
 const { Otp } = require("./otp.service")
 const AWS = require('aws-sdk');
 const ApiError = require('../utils/ApiError');
 const Agora = require('agora-access-token');
 const appID = 'e1838e4a64e348f8b5ebe8deeff37281';
 const appCertificate = 'b0c21c32605f47f8b2228ec8494faa3d';
-const { User, Counsellor } = require("../models/userDetails.model")
+const { User, Counsellor, } = require("../models/userDetails.model")
 
 const axios = require('axios');
 
@@ -391,7 +391,7 @@ const get_counsellor_streaming_list = async (req) => {
         languages: "$users.languages",
         lastConnect: 1,
         counseller: 1,
-        connected:1
+        connected: 1
       }
     }
   ]);
@@ -573,6 +573,24 @@ const stream_end = async (req) => {
 
 }
 
+
+const comment_now = async (req) => {
+
+  let userId = req.userId;
+
+  const { streamId, comment, } = req.body;
+
+  let stream = await Stream.findById(streamId);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+
+  let comments = await Comments.create({ comment, userId: stream.userId, counsellerID: userId, Date: moment() });
+  return comments;
+
+}
+
+
 module.exports = {
   create_stream_request,
   get_stresscall_details_requestt,
@@ -582,5 +600,6 @@ module.exports = {
   get_connect_counsellor_request,
   start_cloud_recording,
   stop_cloud_recording,
-  stream_end
+  stream_end,
+  comment_now
 };

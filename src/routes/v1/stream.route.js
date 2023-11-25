@@ -18,4 +18,10 @@ router.route('/stop/cloud').get(UserAuth, streamrequerst.stop_cloud_recording);
 router.route('/stream/end').get(UserAuth, streamrequerst.stream_end);
 
 
+
+
+router.route('/comment').post(CounsellorAuth, streamrequerst.comment_now);
+
+
+
 module.exports = router;

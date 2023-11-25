@@ -56,6 +56,13 @@ const stream_end = catchAsync(async (req, res) => {
 
 
 
+
+const comment_now = catchAsync(async (req, res) => {
+  const data = await streamrequerst.comment_now(req);
+  res.send(data);
+});
+
+
 module.exports = {
   create_stream_request,
   get_stresscall_details_request,
@@ -65,5 +72,6 @@ module.exports = {
   get_connect_counsellor_request,
   start_cloud_recording,
   stop_cloud_recording,
-  stream_end
+  stream_end,
+  comment_now
 };
