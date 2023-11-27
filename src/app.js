@@ -20,8 +20,6 @@ const useragent = require('express-useragent');
 const mongoose = require('mongoose');
 
 const app = express();
-
-
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);

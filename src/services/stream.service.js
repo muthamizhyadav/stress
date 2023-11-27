@@ -10,6 +10,7 @@ const Agora = require('agora-access-token');
 const appID = 'e1838e4a64e348f8b5ebe8deeff37281';
 const appCertificate = 'b0c21c32605f47f8b2228ec8494faa3d';
 const { User, Counsellor, } = require("../models/userDetails.model")
+const { Timeline, Streamtimeline } = require("../models/timeline.model")
 
 const axios = require('axios');
 
@@ -74,6 +75,48 @@ const create_stream_request = async (req) => {
   await production_supplier_token_cloudrecording(stream._id);
   return { token, stream };
 };
+
+const get_stream_details = async (req) => {
+  let streamId = req.query.id;
+  const userId = req.userId;
+  let stream = await Stream.findById(streamId);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+  stream = await Stream.aggregate([
+    { $match: { $and: [{ _id: { $eq: stream._id } }] } },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    { $unwind: "$users" },
+    {
+      $addFields: {
+        connected: { $eq: ['$lastConnect', userId] },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        actualEndTime: 1,
+        endTime: 1,
+        startTime: 1,
+        usersName: "$users.name",
+        languages: "$users.languages",
+        lastConnect: 1,
+        counseller: 1,
+        connected: 1
+      }
+    }
+  ]);
+  return stream[0];
+
+
+}
 
 
 
@@ -175,9 +218,21 @@ const connect_counsellor_request = async (req) => {
   if (stream.counseller == 'yes') {
     throw new ApiError(httpStatus.NOT_FOUND, 'Another Counseller Onlive');
   }
+  await Streamtimeline.updateMany({ streamId: stream._id, status: "active" }, { $set: { status: "End", End: moment() } }, { new: true });
+  const timeline = await Streamtimeline.create({
+    streamId: stream._id,
+    Start: moment(),
+    timeline: req.timeline,
+    device: req.deviceInfo,
+    userId: stream.userId,
+    connectedBy: req.userId,
+  });
+  const line = await Timeline.findByIdAndUpdate({ _id: req.timeline }, { streamTimeline: timeline._id, watchingStream: stream._id }, { new: true })
   stream.lastConnect = userId;
   stream.counseller = 'yes';
+  stream.streamTimeline = timeline._id;
   stream.save();
+
   let token = await Token.find({ streamId: stream._id, userId: userId }).count();
   if (token == 0) {
     const expirationTimestamp = stream.actualEndTime / 1000
@@ -224,6 +279,8 @@ const connect_counsellor_request = async (req) => {
   stream.languages.forEach((lan) => {
     req.io.emit(lan + "_language", streamss[0]);
   })
+
+
   return { token, stream };
 };
 
@@ -240,10 +297,12 @@ const disconnect_counsellor_request = async (req) => {
   }
   stream.lastConnect = null;
   stream.counseller = 'no';
-  stream.save();
   stream.languages.forEach((lan) => {
     req.io.emit(lan + "_language", stream);
   })
+  await Streamtimeline.findByIdAndUpdate({ _id: stream.streamTimeline }, { status: "End", End: moment() }, { new: true })
+  stream.streamTimeline = null;
+  stream.save();
   return stream;
 };
 
@@ -304,6 +363,21 @@ const get_stresscall_details_requestt = async (req) => {
   ])
   return stream[0];
 };
+const get_connected_counseller_request = async (req) => {
+  let stream = await Stream.findById(req.query.id);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream Not Fount');
+  }
+  let coun = await Counsellor.findById(stream.lastConnect);
+  if (coun) {
+    return { name: coun.name, languages: coun.languages };
+  }
+  else {
+    return { name: "", languages: [] };
+  }
+
+
+}
 
 const get_connect_counsellor_request = async (req) => {
   let userId = req.userId;
@@ -311,6 +385,10 @@ const get_connect_counsellor_request = async (req) => {
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream Not Fount');
   }
+  if (stream.lastConnect != req.userId) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Not Eligible');
+  }
+
   stream = await Stream.aggregate([
     {
       $match: {
@@ -336,6 +414,15 @@ const get_connect_counsellor_request = async (req) => {
     },
     { $unwind: "$streamtokens" },
     {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    { $unwind: "$users" },
+    {
       $project: {
         _id: 1,
         userId: 1,
@@ -346,8 +433,10 @@ const get_connect_counsellor_request = async (req) => {
         uid: "$streamtokens.uid",
         chennal: "$streamtokens.chennal",
         store: 1,
+        userName: "$users.name",
+        languages: "$users.languages",
       }
-    }
+    },
   ])
   return stream[0];
 };
@@ -537,7 +626,7 @@ const stop_cloud_recording = async (req) => {
       });
 
       token.recoredStart = 'stop';
-      console.log(stop.data.serverResponse, 987389)
+      // console.log(stop.data.serverResponse, 987389)
       if (stop.data != null) {
         if (stop.data.serverResponse.fileList.length == 2) {
           token.videoLink = stop.data.serverResponse.fileList[0].fileName;
@@ -569,6 +658,7 @@ const stream_end = async (req) => {
   stream.languages.forEach((lan) => {
     req.io.emit(lan + "_language", { streamId: stream._id, status: "End" });
   })
+
   return stream;
 
 }
@@ -599,6 +689,9 @@ const comment_now = async (req) => {
 
 
 const get_perviews_comments = async (req) => {
+
+  const page = req.query.page == null || req.query.page == '' || req.query.page == 'null' ? 0 : req.query.page;
+  let userId = req.userId;
   let stream = await Stream.findById(req.query.id);
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
@@ -621,13 +714,38 @@ const get_perviews_comments = async (req) => {
         counsellerName: "$counsellors.name",
         languagesName: "$counsellors.languages",
         this_stream: { $eq: ["$streamId", stream._id] },
-        me: { $eq: ["$counsellerID", stream.counsellerID] },
+        me: { $eq: ["$counsellerID", userId] },
       },
     },
-    { $limit: 10 }
+    { $skip: 10 * page },
+    { $limit: 10 },
   ]);
 
-  return comments;
+  let next = await Comments.aggregate([
+    { $match: { $and: [{ userId: stream.userId }] } },
+    { $sort: { Date: -1 } },
+    {
+      $lookup: {
+        from: 'counsellors',
+        localField: 'counsellerID',
+        foreignField: '_id',
+        as: 'counsellors',
+      },
+    },
+    { $unwind: "$counsellors" },
+    {
+      $addFields: {
+        counsellerName: "$counsellors.name",
+        languagesName: "$counsellors.languages",
+        this_stream: { $eq: ["$streamId", stream._id] },
+        me: { $eq: ["$counsellerID", userId] },
+      },
+    },
+    { $skip: 10 * (page + 1) },
+    { $limit: 10 },
+  ]);
+
+  return { comments, next: next.length != 0 };
 }
 
 const get_my_comment = async (req) => {
@@ -644,7 +762,9 @@ const get_my_comment = async (req) => {
 
 module.exports = {
   create_stream_request,
+  get_stream_details,
   get_stresscall_details_requestt,
+  get_connected_counseller_request,
   get_counsellor_streaming_list,
   connect_counsellor_request,
   disconnect_counsellor_request,

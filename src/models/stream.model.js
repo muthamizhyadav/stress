@@ -42,6 +42,9 @@ const StreamSchema = new mongoose.Schema(
     counseller: {
       type: String,
       default: "no"
+    },
+    streamTimeline: {
+      type: String,
     }
   },
   { timestamps: true }
