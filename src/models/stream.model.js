@@ -42,6 +42,9 @@ const StreamSchema = new mongoose.Schema(
     counseller: {
       type: String,
       default: "no"
+    },
+    streamTimeline: {
+      type: String,
     }
   },
   { timestamps: true }
@@ -109,7 +112,41 @@ const tokenSchema = new mongoose.Schema(
 const Token = mongoose.model('streamtoken', tokenSchema);
 
 
+
+
+
+
+
+const commentsSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: v4,
+    },
+    counsellerID: {
+      type: String,
+    },
+    userId: {
+      type: String,
+    },
+    comment: {
+      type: String,
+    },
+    Date: {
+      type: Number
+    },
+    streamId: {
+      type: String,
+    }
+
+  },
+  { timestamps: true }
+);
+
+const Comments = mongoose.model('comment', commentsSchema);
+
 module.exports = {
   Stream,
-  Token
+  Token,
+  Comments
 };

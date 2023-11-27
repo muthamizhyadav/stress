@@ -10,6 +10,10 @@ const create_stream_request = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const get_stream_details = catchAsync(async (req, res) => {
+  const data = await streamrequerst.get_stream_details(req);
+  res.send(data);
+});
 const get_stresscall_details_request = catchAsync(async (req, res) => {
   const data = await streamrequerst.get_stresscall_details_requestt(req);
   res.send(data);
@@ -27,6 +31,11 @@ const disconnect_counsellor_request = catchAsync(async (req, res) => {
 
 const get_connect_counsellor_request = catchAsync(async (req, res) => {
   const data = await streamrequerst.get_connect_counsellor_request(req);
+  res.send(data);
+});
+
+const get_connected_counseller_request = catchAsync(async (req, res) => {
+  const data = await streamrequerst.get_connected_counseller_request(req);
   res.send(data);
 });
 
@@ -56,14 +65,36 @@ const stream_end = catchAsync(async (req, res) => {
 
 
 
+
+const comment_now = catchAsync(async (req, res) => {
+  const data = await streamrequerst.comment_now(req);
+  res.send(data);
+});
+
+
+const get_perviews_comments = catchAsync(async (req, res) => {
+  const data = await streamrequerst.get_perviews_comments(req);
+  res.send(data);
+});
+
+const get_my_comment = catchAsync(async (req, res) => {
+  const data = await streamrequerst.get_my_comment(req);
+  res.send(data);
+});
 module.exports = {
   create_stream_request,
+  get_stream_details,
   get_stresscall_details_request,
   get_counsellor_streaming_list,
   connect_counsellor_request,
   disconnect_counsellor_request,
   get_connect_counsellor_request,
+  get_connected_counseller_request,
   start_cloud_recording,
   stop_cloud_recording,
-  stream_end
+  stream_end,
+  comment_now,
+  get_perviews_comments,
+  get_my_comment,
+  get_connected_counseller_request
 };
