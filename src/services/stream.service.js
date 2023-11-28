@@ -46,21 +46,21 @@ const create_stream_request = async (req) => {
     { $match: { $and: [{ _id: { $eq: stream._id } }] } },
     {
       $lookup: {
-        from: 'users',
+        from: 'stressusers',
         localField: 'userId',
         foreignField: '_id',
-        as: 'users',
+        as: 'stressusers',
       },
     },
-    { $unwind: "$users" },
+    { $unwind: "$stressusers" },
     {
       $project: {
         _id: 1,
         actualEndTime: 1,
         endTime: 1,
         startTime: 1,
-        usersName: "$users.name",
-        languages: "$users.languages",
+        usersName: "$stressusers.name",
+        languages: "$stressusers.languages",
         lastConnect: 1,
         counseller: 1
       }
@@ -87,13 +87,13 @@ const get_stream_details = async (req) => {
     { $match: { $and: [{ _id: { $eq: stream._id } }] } },
     {
       $lookup: {
-        from: 'users',
+        from: 'stressusers',
         localField: 'userId',
         foreignField: '_id',
-        as: 'users',
+        as: 'stressusers',
       },
     },
-    { $unwind: "$users" },
+    { $unwind: "$stressusers" },
     {
       $addFields: {
         connected: { $eq: ['$lastConnect', userId] },
@@ -105,8 +105,8 @@ const get_stream_details = async (req) => {
         actualEndTime: 1,
         endTime: 1,
         startTime: 1,
-        usersName: "$users.name",
-        languages: "$users.languages",
+        usersName: "$stressusers.name",
+        languages: "$stressusers.languages",
         lastConnect: 1,
         counseller: 1,
         connected: 1
@@ -256,21 +256,21 @@ const connect_counsellor_request = async (req) => {
     { $match: { $and: [{ _id: { $eq: stream._id } }] } },
     {
       $lookup: {
-        from: 'users',
+        from: 'stressusers',
         localField: 'userId',
         foreignField: '_id',
-        as: 'users',
+        as: 'stressusers',
       },
     },
-    { $unwind: "$users" },
+    { $unwind: "$stressusers" },
     {
       $project: {
         _id: 1,
         actualEndTime: 1,
         endTime: 1,
         startTime: 1,
-        usersName: "$users.name",
-        languages: "$users.languages",
+        usersName: "$stressusers.name",
+        languages: "$stressusers.languages",
         lastConnect: 1,
         counseller: 1
       }
@@ -415,13 +415,13 @@ const get_connect_counsellor_request = async (req) => {
     { $unwind: "$streamtokens" },
     {
       $lookup: {
-        from: 'users',
+        from: 'stressusers',
         localField: 'userId',
         foreignField: '_id',
-        as: 'users',
+        as: 'stressusers',
       },
     },
-    { $unwind: "$users" },
+    { $unwind: "$stressusers" },
     {
       $project: {
         _id: 1,
@@ -433,8 +433,8 @@ const get_connect_counsellor_request = async (req) => {
         uid: "$streamtokens.uid",
         chennal: "$streamtokens.chennal",
         store: 1,
-        userName: "$users.name",
-        languages: "$users.languages",
+        userName: "$stressusers.name",
+        languages: "$stressusers.languages",
       }
     },
   ])
@@ -458,13 +458,13 @@ const get_counsellor_streaming_list = async (req) => {
     { $match: { $and: [long_match, { endTime: { $gte: nowTime } }, { status: { $ne: "End" } }] } },
     {
       $lookup: {
-        from: 'users',
+        from: 'stressusers',
         localField: 'userId',
         foreignField: '_id',
-        as: 'users',
+        as: 'stressusers',
       },
     },
-    { $unwind: "$users" },
+    { $unwind: "$stressusers" },
     {
       $addFields: {
         connected: { $eq: ['$lastConnect', userId] },
@@ -476,8 +476,8 @@ const get_counsellor_streaming_list = async (req) => {
         actualEndTime: 1,
         endTime: 1,
         startTime: 1,
-        usersName: "$users.name",
-        languages: "$users.languages",
+        usersName: "$stressusers.name",
+        languages: "$stressusers.languages",
         lastConnect: 1,
         counseller: 1,
         connected: 1

@@ -9,6 +9,7 @@ const { generateToken_OTP } = require("./token.service")
 
 
 const Otp = async (mobile, user) => {
+    console.log(mobile.name)
     const contact = mobile;
     let OTPCODE = Math.floor(100000 + Math.random() * 900000);
     let message = `${OTPCODE} is the Onetime password(OTP) to reset the password. This is usable once and valid for 5 mins from the request. PLS DO NOT SHARE WITH ANYONE - AgriExpoLive2023(An Ookam company event)`;

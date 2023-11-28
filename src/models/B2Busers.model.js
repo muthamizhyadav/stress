@@ -24,14 +24,7 @@ const B2BusersSchema = mongoose.Schema(
     email: {
       type: String,
       // required: true,
-      unique: true,
-      trim: true,
-      lowercase: true,
-      validate(value) {
-        if (!validator.isEmail(value)) {
-          throw new Error('Invalid email');
-        }
-      },
+
     },
     password: {
       type: String, // used by the toJSON plugin
@@ -43,7 +36,6 @@ const B2BusersSchema = mongoose.Schema(
     phoneNumber: {
       type: Number,
       required: true,
-      unique: true,
     },
     userRole: {
       type: String,
