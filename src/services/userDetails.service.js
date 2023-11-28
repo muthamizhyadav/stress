@@ -18,7 +18,6 @@ const verify_mobile_number = async (req) => {
   if (!user) {
     user = await User.create({
       mobileNumber: mobileNumber,
-      email: ""
     })
   }
   await OTP.updateMany({ mobileNumber: mobileNumber }, { $set: { used: true } }, { new: true })
