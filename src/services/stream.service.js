@@ -310,7 +310,7 @@ const connect_counsellor_request = async (req) => {
         counseller: 1,
         LastEnd: 1,
         counlingCount: 1,
-        timeline: "$timelines"
+        timelines: "$timelines"
 
       }
     }
@@ -463,7 +463,7 @@ const get_stresscall_details_requestt = async (req) => {
         store: 1,
         LastEnd: 1,
         counlingCount: 1,
-        timeline: 1
+        timelines: 1
 
       }
     }
@@ -554,7 +554,7 @@ const get_connect_counsellor_request = async (req) => {
         languages: "$stressusers.languages",
         LastEnd: 1,
         counlingCount: 1,
-        timeline: 1
+        timelines: 1
 
       }
     },
