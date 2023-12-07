@@ -70,6 +70,14 @@ const user_disconnect_stream = async (socket, io) => {
                 },
                 { $unwind: "$users" },
                 {
+                    $lookup: {
+                        from: 'streamtimelines',
+                        localField: '_id',
+                        foreignField: 'streamId',
+                        as: 'timelines',
+                    },
+                },
+                {
                     $project: {
                         _id: 1,
                         actualEndTime: 1,
@@ -79,7 +87,8 @@ const user_disconnect_stream = async (socket, io) => {
                         languages: "$users.languages",
                         lastConnect: 1,
                         counseller: "no",
-                        LastEnd: 1
+                        LastEnd: 1,
+                        timelines: 1
                     }
                 }
             ]);
