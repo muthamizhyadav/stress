@@ -135,7 +135,10 @@ const counselorSchema = new mongoose.Schema(
     },
     Id_Proof_Name: {
       type: String,
-    }
+    },
+    Id_Proof_format: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
