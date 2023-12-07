@@ -477,6 +477,15 @@ const get_counsellor_streaming_list = async (req) => {
       },
     },
     {
+      $lookup: {
+        from: 'streamtimelines',
+        localField: '_id',
+        foreignField: 'streamId',
+        as: 'timelines',
+      },
+    },
+
+    {
       $project: {
         _id: 1,
         actualEndTime: 1,
@@ -486,7 +495,8 @@ const get_counsellor_streaming_list = async (req) => {
         languages: "$stressusers.languages",
         lastConnect: 1,
         counseller: 1,
-        connected: 1
+        connected: 1,
+        timelines: 1
       }
     }
   ]);
