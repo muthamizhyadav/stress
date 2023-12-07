@@ -33,13 +33,13 @@ const verify_otp = async (req) => {
   let find_otp = await OTP.findById(otpId)
   console.log(find_otp, 879)
   if (!find_otp) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid Access');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Access');
   }
   if (find_otp.userId != req.userId) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid Access');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Access');
   }
   if (find_otp.OTP != OTP_Code) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid OTP');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid OTP');
   }
   if (find_otp.expTime < new Date().getTime()) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Otp Expired');
@@ -78,7 +78,7 @@ const get_user_deatils = async (req) => {
 const update_user_deatils = async (req) => {
   let user = await User.findById(req.userId);
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid Access');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Access');
   }
   user = await User.findByIdAndUpdate({ _id: user._id }, { ...req.body, ...{ info_collected: true } }, { new: true });
   return user;

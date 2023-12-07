@@ -287,6 +287,7 @@ const connect_counsellor_request = async (req) => {
 
 
 const disconnect_counsellor_request = async (req) => {
+  console.log("disconnect", 987687667)
   let userId = req.userId;
   let stream = await Stream.findById(req.body.stream);
   if (!stream) {
@@ -297,6 +298,8 @@ const disconnect_counsellor_request = async (req) => {
   }
   stream.lastConnect = null;
   stream.counseller = 'no';
+  stream.connected = false;
+
   stream.languages.forEach((lan) => {
     req.io.emit(lan + "_language", stream);
   })
@@ -381,7 +384,9 @@ const get_connected_counseller_request = async (req) => {
 
 const get_connect_counsellor_request = async (req) => {
   let userId = req.userId;
-  let stream = await Stream.findById(req.query.id)
+  let stream = await Stream.findById(req.query.id);
+  console.log(stream)
+  console.log(req.userId)
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream Not Fount');
   }

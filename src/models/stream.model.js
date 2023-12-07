@@ -45,6 +45,10 @@ const StreamSchema = new mongoose.Schema(
     },
     streamTimeline: {
       type: String,
+    },
+    connected: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }
