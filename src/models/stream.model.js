@@ -49,6 +49,9 @@ const StreamSchema = new mongoose.Schema(
     connected: {
       type: Boolean,
       default: false
+    },
+    LastEnd: {
+      type: Number
     }
   },
   { timestamps: true }

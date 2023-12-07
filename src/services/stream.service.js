@@ -16,7 +16,7 @@ const axios = require('axios');
 
 const create_stream_request = async (req) => {
   let counsellor = await User.findById(req.userId);
-  await Stream.updateMany({ userId: req.userId, status: { $ne: "End" } }, { $set: { endTime: new Date().getTime(), status: "End" } })
+  await Stream.updateMany({ userId: req.userId, status: { $ne: "End" } }, { $set: { endTime: new Date().getTime(), LastEnd: new Date(), status: "End" } })
   const moment_curr = moment();
   const currentTimestamp = moment_curr.add(60, 'minutes');
   const expirationTimestamp =
@@ -29,7 +29,8 @@ const create_stream_request = async (req) => {
     startTime: moment(),
     endTime: currentTimestamp,
     status: "Pending",
-    languages: counsellor.languages
+    languages: counsellor.languages,
+    LastEnd: moment()
   });
   let tokens = await geenerate_rtc_token(stream._id, uid, 1, expirationTimestamp);
   stream.store = stream._id.replace(/[^a-zA-Z0-9]/g, '');
@@ -299,6 +300,7 @@ const disconnect_counsellor_request = async (req) => {
   stream.lastConnect = null;
   stream.counseller = 'no';
   stream.connected = false;
+  stream.LastEnd = new Date().getTime();
   setTimeout(() => {
     stream.languages.forEach((lan) => {
       req.io.emit(lan + "_language", stream);
@@ -669,7 +671,7 @@ const stream_end = async (req) => {
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
   }
-  stream = await Stream.findByIdAndUpdate({ _id: stream._id }, { endTime: new Date().getTime(), status: "End" }, { new: true });
+  stream = await Stream.findByIdAndUpdate({ _id: stream._id }, { endTime: new Date().getTime(), status: "End", LastEnd: new Date() }, { new: true });
   req.io.emit(stream._id + "_stream_end", { message: "Stream END" });
   stream.languages.forEach((lan) => {
     req.io.emit(lan + "_language", { streamId: stream._id, status: "End" });
