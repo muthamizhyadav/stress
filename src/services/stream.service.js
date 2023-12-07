@@ -299,10 +299,11 @@ const disconnect_counsellor_request = async (req) => {
   stream.lastConnect = null;
   stream.counseller = 'no';
   stream.connected = false;
-
-  stream.languages.forEach((lan) => {
-    req.io.emit(lan + "_language", stream);
-  })
+  setTimeout(() => {
+    stream.languages.forEach((lan) => {
+      req.io.emit(lan + "_language", stream);
+    })
+  }, 400)
   await Streamtimeline.findByIdAndUpdate({ _id: stream.streamTimeline }, { status: "End", End: moment() }, { new: true })
   stream.streamTimeline = null;
   stream.save();
