@@ -57,6 +57,14 @@ const create_stream_request = async (req) => {
     },
     { $unwind: "$stressusers" },
     {
+      $lookup: {
+        from: 'streamtimelines',
+        localField: '_id',
+        foreignField: 'streamId',
+        as: 'timelines',
+      },
+    },
+    {
       $project: {
         _id: 1,
         actualEndTime: 1,
@@ -67,7 +75,8 @@ const create_stream_request = async (req) => {
         lastConnect: 1,
         counseller: 1,
         LastEnd: 1,
-        counlingCount: 1
+        counlingCount: 1,
+        timelines: "$timelines"
 
       }
     }
@@ -106,6 +115,14 @@ const get_stream_details = async (req) => {
       },
     },
     {
+      $lookup: {
+        from: 'streamtimelines',
+        localField: '_id',
+        foreignField: 'streamId',
+        as: 'timelines',
+      },
+    },
+    {
       $project: {
         _id: 1,
         actualEndTime: 1,
@@ -117,7 +134,8 @@ const get_stream_details = async (req) => {
         counseller: 1,
         connected: 1,
         LastEnd: 1,
-        counlingCount: 1
+        counlingCount: 1,
+        timelines: "$timelines"
 
       }
     }
@@ -273,6 +291,14 @@ const connect_counsellor_request = async (req) => {
     },
     { $unwind: "$stressusers" },
     {
+      $lookup: {
+        from: 'streamtimelines',
+        localField: '_id',
+        foreignField: 'streamId',
+        as: 'timelines',
+      },
+    },
+    {
       $project: {
         _id: 1,
         actualEndTime: 1,
@@ -283,7 +309,8 @@ const connect_counsellor_request = async (req) => {
         lastConnect: 1,
         counseller: 1,
         LastEnd: 1,
-        counlingCount: 1
+        counlingCount: 1,
+        timeline: "$timelines"
 
       }
     }
@@ -365,6 +392,14 @@ const get_stresscall_details_requestt = async (req) => {
     },
     { $unwind: "$streamtokens" },
     {
+      $lookup: {
+        from: 'streamtimelines',
+        localField: '_id',
+        foreignField: 'streamId',
+        as: 'timelines',
+      },
+    },
+    {
       $project: {
         _id: 1,
         userId: 1,
@@ -376,7 +411,8 @@ const get_stresscall_details_requestt = async (req) => {
         chennal: "$streamtokens.chennal",
         store: 1,
         LastEnd: 1,
-        counlingCount: 1
+        counlingCount: 1,
+        timeline: 1
 
       }
     }
@@ -445,6 +481,14 @@ const get_connect_counsellor_request = async (req) => {
     },
     { $unwind: "$stressusers" },
     {
+      $lookup: {
+        from: 'streamtimelines',
+        localField: '_id',
+        foreignField: 'streamId',
+        as: 'timelines',
+      },
+    },
+    {
       $project: {
         _id: 1,
         userId: 1,
@@ -458,7 +502,8 @@ const get_connect_counsellor_request = async (req) => {
         userName: "$stressusers.name",
         languages: "$stressusers.languages",
         LastEnd: 1,
-        counlingCount: 1
+        counlingCount: 1,
+        timeline: 1
 
       }
     },
@@ -517,8 +562,8 @@ const get_counsellor_streaming_list = async (req) => {
         connected: 1,
         timelines: 1,
         LastEnd: 1,
-        counlingCount: 1
-
+        counlingCount: 1,
+        timelines: 1
       }
     }
   ]);
