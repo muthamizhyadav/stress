@@ -16,6 +16,7 @@ const axios = require('axios');
 
 const create_stream_request = async (req) => {
   let counsellor = await User.findById(req.userId);
+  let count = await Stream.find({ userId: req.userId }).count();
   await Stream.updateMany({ userId: req.userId, status: { $ne: "End" } }, { $set: { endTime: new Date().getTime(), LastEnd: new Date(), status: "End" } })
   const moment_curr = moment();
   const currentTimestamp = moment_curr.add(60, 'minutes');
@@ -30,7 +31,8 @@ const create_stream_request = async (req) => {
     endTime: currentTimestamp,
     status: "Pending",
     languages: counsellor.languages,
-    LastEnd: moment()
+    LastEnd: moment(),
+    counlingCount: count + 1
   });
   let tokens = await geenerate_rtc_token(stream._id, uid, 1, expirationTimestamp);
   stream.store = stream._id.replace(/[^a-zA-Z0-9]/g, '');
@@ -64,7 +66,8 @@ const create_stream_request = async (req) => {
         languages: "$stressusers.languages",
         lastConnect: 1,
         counseller: 1,
-        LastEnd: 1
+        LastEnd: 1,
+        counlingCount: 1
 
       }
     }
@@ -113,7 +116,8 @@ const get_stream_details = async (req) => {
         lastConnect: 1,
         counseller: 1,
         connected: 1,
-        LastEnd: 1
+        LastEnd: 1,
+        counlingCount: 1
 
       }
     }
@@ -278,7 +282,8 @@ const connect_counsellor_request = async (req) => {
         languages: "$stressusers.languages",
         lastConnect: 1,
         counseller: 1,
-        LastEnd: 1
+        LastEnd: 1,
+        counlingCount: 1
 
       }
     }
@@ -370,7 +375,8 @@ const get_stresscall_details_requestt = async (req) => {
         uid: "$streamtokens.uid",
         chennal: "$streamtokens.chennal",
         store: 1,
-        LastEnd: 1
+        LastEnd: 1,
+        counlingCount: 1
 
       }
     }
@@ -451,7 +457,8 @@ const get_connect_counsellor_request = async (req) => {
         store: 1,
         userName: "$stressusers.name",
         languages: "$stressusers.languages",
-        LastEnd: 1
+        LastEnd: 1,
+        counlingCount: 1
 
       }
     },
@@ -509,7 +516,9 @@ const get_counsellor_streaming_list = async (req) => {
         counseller: 1,
         connected: 1,
         timelines: 1,
-        LastEnd: 1
+        LastEnd: 1,
+        counlingCount: 1
+
       }
     }
   ]);

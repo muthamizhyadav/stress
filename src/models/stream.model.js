@@ -52,7 +52,10 @@ const StreamSchema = new mongoose.Schema(
     },
     LastEnd: {
       type: Number
-    }
+    },
+    counlingCount: {
+      type: Number
+    },
   },
   { timestamps: true }
 );
