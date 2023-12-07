@@ -388,7 +388,9 @@ const disconnect_counsellor_request = async (req) => {
         store: 1,
         LastEnd: 1,
         counlingCount: 1,
-        timelines: 1
+        timelines: 1,
+        counseller: 1,
+        lastConnect: 1
 
       }
     }
