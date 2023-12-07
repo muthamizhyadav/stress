@@ -63,7 +63,9 @@ const create_stream_request = async (req) => {
         usersName: "$stressusers.name",
         languages: "$stressusers.languages",
         lastConnect: 1,
-        counseller: 1
+        counseller: 1,
+        LastEnd: 1
+
       }
     }
   ]);
@@ -110,7 +112,9 @@ const get_stream_details = async (req) => {
         languages: "$stressusers.languages",
         lastConnect: 1,
         counseller: 1,
-        connected: 1
+        connected: 1,
+        LastEnd: 1
+
       }
     }
   ]);
@@ -273,7 +277,9 @@ const connect_counsellor_request = async (req) => {
         usersName: "$stressusers.name",
         languages: "$stressusers.languages",
         lastConnect: 1,
-        counseller: 1
+        counseller: 1,
+        LastEnd: 1
+
       }
     }
   ]);
@@ -364,6 +370,8 @@ const get_stresscall_details_requestt = async (req) => {
         uid: "$streamtokens.uid",
         chennal: "$streamtokens.chennal",
         store: 1,
+        LastEnd: 1
+
       }
     }
   ])
@@ -443,6 +451,8 @@ const get_connect_counsellor_request = async (req) => {
         store: 1,
         userName: "$stressusers.name",
         languages: "$stressusers.languages",
+        LastEnd: 1
+
       }
     },
   ])
@@ -498,7 +508,8 @@ const get_counsellor_streaming_list = async (req) => {
         lastConnect: 1,
         counseller: 1,
         connected: 1,
-        timelines: 1
+        timelines: 1,
+        LastEnd: 1
       }
     }
   ]);
