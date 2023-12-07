@@ -78,7 +78,8 @@ const user_disconnect_stream = async (socket, io) => {
                         usersName: "$users.name",
                         languages: "$users.languages",
                         lastConnect: 1,
-                        counseller: "no"
+                        counseller: "no",
+                        LastEnd: 1
                     }
                 }
             ]);
