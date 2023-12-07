@@ -28,13 +28,13 @@ const verify_otp = async (req) => {
   let OTP_Code = req.body.otp;
   let find_otp = await OTP.findById(otpId)
   if (!find_otp) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid Access');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Access');
   }
   if (find_otp.userId != req.userId) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid Access');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Access');
   }
   if (find_otp.OTP != OTP_Code) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid OTP');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid OTP');
   }
   if (find_otp.expTime < new Date().getTime()) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Otp Expired');
@@ -99,7 +99,7 @@ const upload_image_idproof = async (req) => {
 const update_user_deatils = async (req) => {
   let user = await Counsellor.findById(req.userId);
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Invaid Access');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Access');
   }
   user = await Counsellor.findByIdAndUpdate({ _id: user._id }, { ...req.body, ...{ info_collected: true } }, { new: true });
   return user;
