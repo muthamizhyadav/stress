@@ -81,6 +81,11 @@ const get_my_comment = catchAsync(async (req, res) => {
   const data = await streamrequerst.get_my_comment(req);
   res.send(data);
 });
+
+const get_my_counsling = catchAsync(async (req, res) => {
+  const data = await streamrequerst.get_my_counsling(req);
+  res.send(data);
+});
 module.exports = {
   create_stream_request,
   get_stream_details,
@@ -96,5 +101,6 @@ module.exports = {
   comment_now,
   get_perviews_comments,
   get_my_comment,
-  get_connected_counseller_request
+  get_connected_counseller_request,
+  get_my_counsling
 };

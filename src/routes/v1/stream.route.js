@@ -31,4 +31,9 @@ router.route('/comment').get(CounsellorAuth, streamrequerst.get_my_comment);
 
 
 
+router.route('/get/my/counsling').get(CounsellorAuth, streamrequerst.get_my_counsling);
+
+
+
+
 module.exports = router;

@@ -895,6 +895,81 @@ const get_my_comment = async (req) => {
   return comments;
 }
 
+const get_my_counsling = async (req) => {
+
+  let userId = req.userId;
+  const timeline = await Streamtimeline.aggregate([
+    { $sort: { createdAt: -1 } },
+    { $match: { $and: [{ connectedBy: { $eq: userId } }] } },
+    {
+      $lookup: {
+        from: 'streams',
+        localField: 'streamId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'stressusers',
+              localField: 'userId',
+              foreignField: '_id',
+              as: 'stressusers',
+            },
+          },
+          { $unwind: "$stressusers" },
+          {
+            $lookup: {
+              from: 'streamtimelines',
+              localField: '_id',
+              foreignField: 'streamId',
+              as: 'timelines',
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              actualEndTime: 1,
+              endTime: 1,
+              startTime: 1,
+              usersName: "$stressusers.name",
+              languages: "$stressusers.languages",
+              lastConnect: 1,
+              counseller: 1,
+              LastEnd: 1,
+              counlingCount: 1,
+              timelines: "$timelines"
+            }
+          }
+        ],
+        as: 'stream',
+      },
+    },
+    { $unwind: "$stream" },
+
+    {
+      $project: {
+        _id: 1,
+        streamId: "$stream._id",
+        actualEndTime: "$stream.actualEndTime",
+        endTime: "$stream.endTime",
+        startTime: "$stream.startTime",
+        usersName: "$stream.usersName",
+        languages: "$stream.languages",
+        lastConnect: "$stream.lastConnect",
+        counseller: "$stream.counseller",
+        LastEnd: "$stream.LastEnd",
+        counlingCount: "$stream.counlingCount",
+        timelines: "$stream.timelines",
+        Start: 1,
+        End: 1
+      }
+    }
+
+
+  ])
+  return timeline;
+}
+
+
 
 module.exports = {
   create_stream_request,
@@ -910,5 +985,6 @@ module.exports = {
   stream_end,
   comment_now,
   get_perviews_comments,
-  get_my_comment
+  get_my_comment,
+  get_my_counsling
 };
