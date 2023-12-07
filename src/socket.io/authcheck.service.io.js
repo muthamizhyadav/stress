@@ -49,12 +49,15 @@ const user_disconnect_stream = async (socket, io) => {
         let streamtimeline = await Streamtimeline.findById(timeline.streamTimeline);
         timeline.watchingStream = null;
         timeline.streamTimeline = null;
+
         timeline.save();
         if (stream) {
-            // stream.streamTimeline = null;
-            // stream.counseller = 'no';
-            // stream.lastConnect = null;
-            // stream.save();
+            stream.streamTimeline = null;
+            stream.counseller = 'no';
+            stream.lastConnect = null;
+            stream.LastEnd = new Date();
+            streamtimeline.End = moment();
+            stream.save();
             let streamss = await Stream.aggregate([
                 { $match: { $and: [{ _id: { $eq: stream._id } }] } },
                 {
