@@ -944,6 +944,21 @@ const get_my_counsling = async (req) => {
       },
     },
     { $unwind: "$stream" },
+    {
+      $lookup: {
+        from: 'comments',
+        localField: 'streamId',
+        foreignField: 'streamId',
+        // pipeline: [{ $match: { $and: [{ counsellerID: { $eq: userId } }] } }],
+        as: 'comments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$comments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
 
     {
       $project: {
@@ -960,7 +975,9 @@ const get_my_counsling = async (req) => {
         counlingCount: "$stream.counlingCount",
         timelines: "$stream.timelines",
         Start: 1,
-        End: 1
+        End: 1,
+        commentsss: "$comments",
+        comments: "$comments.comment",
       }
     }
 
@@ -970,6 +987,185 @@ const get_my_counsling = async (req) => {
 }
 
 
+const get_my_comments = async (req) => {
+  let userId = req.userId;
+  let stream = await Streamtimeline.findById(req.query.id);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream Not Found');
+  }
+  if (userId != stream.connectedBy) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream Not Found');
+  }
+  let comment = await Streamtimeline.aggregate([
+    { $match: { $and: [{ _id: req.query.id }] } },
+    {
+      $lookup: {
+        from: 'comments',
+        localField: 'streamId',
+        foreignField: 'streamId',
+        pipeline: [{ $match: { $and: [{ counsellerID: { $eq: userId } }] } }],
+        as: 'comments',
+      },
+    },
+    {
+      $unwind: {
+        path: '$comments',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'stressusers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'stressusers',
+      },
+    },
+    { $unwind: "$stressusers" },
+    {
+      $project: {
+        _id: 1,
+        End: 1,
+        Start: 1,
+        comment: "$comments.comment",
+        stressusers: "$stressusers",
+        languages: "$stressusers.languages",
+        usersName: "$stressusers.name",
+        mobileNumber: "$stressusers.mobileNumber",
+
+      }
+    }
+  ])
+  if (comment.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+
+  return comment[0];
+}
+
+
+const get_my_records = async (req) => {
+
+  let userId = req.userId;
+
+  let streams = await Stream.aggregate([
+    { $match: { $and: [{ userId: { $eq: userId } }] } },
+    {
+      $addFields: {
+        dateString: {
+          $dateToString: {
+            format: "%Y-%m-%d",
+            date: "$createdAt"
+          }
+        },
+        dateForwart: {
+          $dateToString: {
+            format: "%d-%m-%Y",
+            date: "$createdAt"
+          }
+        }
+      }
+    },
+    { $sort: { createdAt: -1 } },
+    {
+      $lookup: {
+        from: 'streamtimelines',
+        localField: '_id',
+        foreignField: 'streamId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'counsellors',
+              localField: 'connectedBy',
+              foreignField: '_id',
+              as: 'counsellors',
+            },
+          },
+          { $unwind: "$counsellors" },
+          {
+            $addFields: {
+              counsellerName: "$counsellors.name",
+              languagesName: "$counsellors.languages",
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              Start: 1,
+              device: 1,
+              End: 1,
+              counsellerName: 1,
+              languagesName: 1
+            }
+          }
+        ],
+        as: 'streamtimelines',
+      },
+    },
+    {
+      $unwind: {
+        path: '$streamtimelines',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    { $limit: 10 },
+    {
+      $project: {
+        _id: 1,
+        dateString: 1,
+        actualEndTime: 1,
+        startTime: 1,
+        endTime: 1,
+        streamLine: "$streamtimelines._id",
+        Start: "$streamtimelines.Start",
+        status: "$streamtimelines.status",
+        device: "$streamtimelines.device",
+        End: "$streamtimelines.End",
+        counsellerName: "$streamtimelines.counsellerName",
+        languagesName: "$streamtimelines.languagesName",
+        dateForwart: 1
+      }
+    },
+
+    {
+      $group: {
+        _id: { date: "$dateString", dateForwart: "$dateForwart" },
+        value: {
+          $push: {
+            _id: "$_id",
+            dateString: "$dateString",
+            actualEndTime: "$actualEndTime",
+            startTime: "$startTime",
+            endTime: "$endTime",
+            streamLine: "$streamLine",
+            Start: "$Start",
+            status: "$status",
+            device: "$device",
+            End: "$End",
+            counsellerName: "$counsellerName",
+            languagesName: "$languagesName",
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        _id: "",
+        date: "$_id.date",
+        dateForwart: "$_id.dateForwart",
+        value: "$value"
+      }
+    },
+    { $sort: { date: -1 } },
+
+
+  ])
+
+
+  return streams;
+
+}
 
 module.exports = {
   create_stream_request,
@@ -986,5 +1182,7 @@ module.exports = {
   comment_now,
   get_perviews_comments,
   get_my_comment,
-  get_my_counsling
+  get_my_counsling,
+  get_my_comments,
+  get_my_records
 };
