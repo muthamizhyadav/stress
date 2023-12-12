@@ -14,7 +14,7 @@ const createB2bUsers = catchAsync(async (req, res) => {
 
 const B2bUsersLogin = catchAsync(async (req, res) => {
   const users = await b2bUsersService.UsersLogin(req.body);
-  const tokens = await tokenService.generateAuthTokens(users);
+  const tokens = await tokenService.generateAuthTokens(users,users);
   res.send({ users, tokens });
 });
 
