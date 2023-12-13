@@ -343,63 +343,65 @@ const disconnect_counsellor_request = async (req) => {
   await Streamtimeline.findByIdAndUpdate({ _id: stream.streamTimeline }, { status: "End", End: moment() }, { new: true })
   stream.streamTimeline = null;
   stream.save();
-  let streamss = await Stream.aggregate([
-    {
-      $match: {
-        $and: [
-          { _id: { $eq: stream._id } }
-        ]
-      }
-    },
-    {
-      $lookup: {
-        from: 'streamtokens',
-        localField: '_id',
-        foreignField: 'streamId',
-        pipeline: [
-          {
-            $match: {
-              type: { $eq: "host" }
-            }
-          },
-        ],
-        as: 'streamtokens',
+  if (stream.status != "End") {
+    let streamss = await Stream.aggregate([
+      {
+        $match: {
+          $and: [
+            { _id: { $eq: stream._id } }
+          ]
+        }
       },
-    },
-    { $unwind: "$streamtokens" },
-    {
-      $lookup: {
-        from: 'streamtimelines',
-        localField: '_id',
-        foreignField: 'streamId',
-        as: 'timelines',
+      {
+        $lookup: {
+          from: 'streamtokens',
+          localField: '_id',
+          foreignField: 'streamId',
+          pipeline: [
+            {
+              $match: {
+                type: { $eq: "host" }
+              }
+            },
+          ],
+          as: 'streamtokens',
+        },
       },
-    },
-    {
-      $project: {
-        _id: 1,
-        userId: 1,
-        actualEndTime: 1,
-        startTime: 1,
-        endTime: 1,
-        token: "$streamtokens.token",
-        uid: "$streamtokens.uid",
-        chennal: "$streamtokens.chennal",
-        store: 1,
-        LastEnd: 1,
-        counlingCount: 1,
-        timelines: 1,
-        counseller: 1,
-        lastConnect: 1
+      { $unwind: "$streamtokens" },
+      {
+        $lookup: {
+          from: 'streamtimelines',
+          localField: '_id',
+          foreignField: 'streamId',
+          as: 'timelines',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          actualEndTime: 1,
+          startTime: 1,
+          endTime: 1,
+          token: "$streamtokens.token",
+          uid: "$streamtokens.uid",
+          chennal: "$streamtokens.chennal",
+          store: 1,
+          LastEnd: 1,
+          counlingCount: 1,
+          timelines: 1,
+          counseller: 1,
+          lastConnect: 1
 
+        }
       }
-    }
-  ])
-  setTimeout(() => {
-    stream.languages.forEach((lan) => {
-      req.io.emit(lan + "_language", streamss[0]);
-    })
-  }, 400)
+    ])
+    setTimeout(() => {
+      stream.languages.forEach((lan) => {
+        req.io.emit(lan + "_language", streamss[0]);
+      })
+    }, 400)
+  }
   return stream;
 };
 
