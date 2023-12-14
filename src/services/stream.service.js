@@ -1125,6 +1125,7 @@ const get_my_records = async (req) => {
         device: "$streamtimelines.device",
         End: "$streamtimelines.End",
         counsellerName: "$streamtimelines.counsellerName",
+        profileImage: "$streamtimelines.profileImage",
         languagesName: "$streamtimelines.languagesName",
         dateForwart: 1
       }
@@ -1147,6 +1148,7 @@ const get_my_records = async (req) => {
             End: "$End",
             counsellerName: "$counsellerName",
             languagesName: "$languagesName",
+            profileImage:"$profileImage"
           }
         }
       }
