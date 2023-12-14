@@ -41,6 +41,11 @@ const update_user_deatils = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const upload_image_profile = catchAsync(async (req, res) => {
+  const data = await UserDetailsService.upload_image_profile(req);
+  res.send(data);
+});
+
 
 module.exports = {
   createUserDetails,
@@ -48,5 +53,6 @@ module.exports = {
   verify_otp,
   verify_otp_get,
   get_user_deatils,
-  update_user_deatils
+  update_user_deatils,
+  upload_image_profile
 };

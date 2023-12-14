@@ -9,7 +9,7 @@ const createUserDetails = async (body) => {
   return val;
 };
 const ApiError = require('../utils/ApiError');
-
+const AWS = require('aws-sdk');
 
 const verify_mobile_number = async (req) => {
   const { mobileNumber } = req.body;
@@ -83,4 +83,38 @@ const update_user_deatils = async (req) => {
   user = await User.findByIdAndUpdate({ _id: user._id }, { ...req.body, ...{ info_collected: true } }, { new: true });
   return user;
 }
-module.exports = { createUserDetails, verify_mobile_number, verify_otp, get_user_deatils, verify_otp_get, update_user_deatils };
+
+const upload_image_profile = async (req) => {
+  if (req.file != null) {
+    const s3 = new AWS.S3({
+      accessKeyId: 'AKIA3323XNN7Y2RU77UG',
+      secretAccessKey: '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',
+      region: 'ap-south-1',
+    });
+    let params = {
+      Bucket: 'anti-stress',
+      Key: req.file.originalname,
+      Body: req.file.buffer,
+    };
+    let counsellor;
+    return new Promise((resolve) => {
+      s3.upload(params, async (err, data) => {
+        if (err) {
+        }
+        counsellor = await User.findByIdAndUpdate({ _id: req.userId }, { profileImage: data.Location }, { new: true });
+        resolve({ teaser: 'success', counsellor });
+      });
+    });
+  } else {
+    return { message: 'Invalid' };
+  }
+}
+module.exports = {
+  createUserDetails,
+  verify_mobile_number,
+  verify_otp,
+  get_user_deatils,
+  verify_otp_get,
+  update_user_deatils,
+  upload_image_profile
+};
