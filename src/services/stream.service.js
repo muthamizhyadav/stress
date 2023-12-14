@@ -1098,7 +1098,8 @@ const get_my_records = async (req) => {
               device: 1,
               End: 1,
               counsellerName: 1,
-              languagesName: 1
+              languagesName: 1,
+              profileImage: 1
             }
           }
         ],
