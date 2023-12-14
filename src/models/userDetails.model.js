@@ -61,6 +61,9 @@ const userSchema = new mongoose.Schema(
     lat: {
       type: Number,
     },
+    profileImage: {
+      type: String,
+    }
 
   },
   { timestamps: true }
