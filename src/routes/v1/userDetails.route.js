@@ -23,7 +23,7 @@ router.route('/user/deatils').get(UserAuth, userDetailsController.get_user_deati
 router.route('/user/deatils').post(UserAuth, userDetailsController.update_user_deatils);
 
 
-router.route('/user/profile').put(UserAuth, profile, userDetailsController.upload_image_profile);
+router.route('/user/profile/upload').put(UserAuth, profile, userDetailsController.upload_image_profile);
 
 
 
