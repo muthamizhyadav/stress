@@ -39,11 +39,17 @@ const upload_image_idproof = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const upload_image_profile = catchAsync(async (req, res) => {
+  const data = await counsellorcontroller.upload_image_profile(req);
+  res.send(data);
+});
+
 module.exports = {
   verify_mobile_number,
   verify_otp,
   get_user_deatils,
   verify_otp_get,
   upload_image_idproof,
-  update_user_deatils
+  update_user_deatils,
+  upload_image_profile
 };
