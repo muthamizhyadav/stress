@@ -1088,6 +1088,7 @@ const get_my_records = async (req) => {
             $addFields: {
               counsellerName: "$counsellors.name",
               languagesName: "$counsellors.languages",
+              profileImage: "$counsellors.profileImage",
             },
           },
           {
