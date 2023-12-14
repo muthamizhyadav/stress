@@ -95,6 +95,33 @@ const upload_image_idproof = async (req) => {
 
 }
 
+const upload_image_profile = async (req) => {
+  if (req.file != null) {
+    const s3 = new AWS.S3({
+      accessKeyId: 'AKIA3323XNN7Y2RU77UG',
+      secretAccessKey: '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',
+      region: 'ap-south-1',
+    });
+    let params = {
+      Bucket: 'anti-stress',
+      Key: req.file.originalname,
+      Body: req.file.buffer,
+    };
+    let counsellor;
+    return new Promise((resolve) => {
+      s3.upload(params, async (err, data) => {
+        if (err) {
+        }
+        counsellor = await Counsellor.findByIdAndUpdate({ _id: req.userId }, { profileImage: data.Location }, { new: true });
+        resolve({ teaser: 'success', counsellor });
+      });
+    });
+  } else {
+    return { message: 'Invalid' };
+  }
+
+}
+
 
 const update_user_deatils = async (req) => {
   let user = await Counsellor.findById(req.userId);
@@ -105,4 +132,12 @@ const update_user_deatils = async (req) => {
   return user;
 }
 
-module.exports = { verify_mobile_number, verify_otp, get_user_deatils, verify_otp_get, upload_image_idproof, update_user_deatils };
+module.exports = {
+  verify_mobile_number,
+  verify_otp,
+  get_user_deatils,
+  verify_otp_get,
+  upload_image_idproof,
+  update_user_deatils,
+  upload_image_profile
+};

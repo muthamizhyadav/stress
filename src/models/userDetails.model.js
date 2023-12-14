@@ -139,6 +139,9 @@ const counselorSchema = new mongoose.Schema(
     Id_Proof_format: {
       type: String,
     },
+    profileImage: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
