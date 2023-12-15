@@ -966,7 +966,12 @@ const get_my_counsling = async (req) => {
         }
       }
     },
-
+    {
+      $unwind: {
+        path: '$value',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
         _id: "$value._id",
