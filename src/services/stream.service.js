@@ -350,7 +350,7 @@ const disconnect_counsellor_request = async (req) => {
     setTimeout(() => {
       stream.languages.forEach((lan) => {
         req.io.emit(lan + "_language", stream);
-      },  1000)
+      }, 1000)
     })
   }
   return stream;
@@ -575,7 +575,12 @@ const get_counsellor_streaming_list = async (req) => {
       }
     }
   ]);
-  return stream;
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(stream)
+    }, 200)
+  });;
 };
 
 
