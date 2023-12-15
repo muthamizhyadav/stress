@@ -329,28 +329,27 @@ const connect_counsellor_request = async (req) => {
 
 
 const disconnect_counsellor_request = async (req) => {
-  console.log("disconnect", 987687667)
   let userId = req.userId;
-  let stream = await Stream.findById(req.body.stream);
+  let stream = await Stream.findByIdAndUpdate({ _id: req.body.stream }, { lastConnect: null, counseller: "no", connected: false, LastEnd: new Date().getTime() }, { new: true });
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream Not Fount');
   }
   if (stream.lastConnect != userId) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Your Not Connected');
   }
-  stream.lastConnect = null;
-  stream.counseller = 'no';
-  stream.connected = false;
-  stream.LastEnd = new Date().getTime();
+  // stream.lastConnect = null;
+  // stream.counseller = 'no';
+  // stream.connected = false;
+  // stream.LastEnd = new Date().getTime();
 
   await Streamtimeline.findByIdAndUpdate({ _id: stream.streamTimeline }, { status: "End", End: moment() }, { new: true })
   stream.streamTimeline = null;
   stream.save();
   if (stream.status != "End") {
-    setTimeout(() => {
-      stream.languages.forEach((lan) => {
-        req.io.emit(lan + "_language", stream);
-      }, 1000)
+    // setTimeout(() => {
+    stream.languages.forEach((lan) => {
+      req.io.emit(lan + "_language", stream);
+      // }, 1000)
     })
   }
   return stream;
