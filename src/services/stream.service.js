@@ -347,8 +347,10 @@ const disconnect_counsellor_request = async (req) => {
   stream.streamTimeline = null;
   stream.save();
   if (stream.status != "End") {
-    stream.languages.forEach((lan) => {
-      req.io.emit(lan + "_language", stream);
+    setTimeout(() => {
+      stream.languages.forEach((lan) => {
+        req.io.emit(lan + "_language", stream);
+      }, 500)
     })
   }
   return stream;
