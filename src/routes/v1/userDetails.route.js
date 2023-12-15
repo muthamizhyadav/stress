@@ -11,7 +11,7 @@ const storage = multer.memoryStorage({
     },
 });
 const profile = multer({ storage }).single('profile');
-
+router.route('/user/profile/upload').put(UserAuth, profile, userDetailsController.upload_image_profile);
 router.route('/').post(userDetailsController.createUserDetails);
 router.route('/verfiy/mobile').post(userDetailsController.verify_mobile_number);
 router.route('/verfiy/otp').post(verifyOTP, userDetailsController.verify_otp);
@@ -23,7 +23,6 @@ router.route('/user/deatils').get(UserAuth, userDetailsController.get_user_deati
 router.route('/user/deatils').post(UserAuth, userDetailsController.update_user_deatils);
 
 
-router.route('/user/profile/upload').put(UserAuth, profile, userDetailsController.upload_image_profile);
 
 
 

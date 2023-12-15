@@ -72,6 +72,7 @@ const create_stream_request = async (req) => {
         startTime: 1,
         usersName: "$stressusers.name",
         languages: "$stressusers.languages",
+        profileImage: "$stressusers.profileImage",
         lastConnect: 1,
         counseller: 1,
         LastEnd: 1,
@@ -130,6 +131,7 @@ const get_stream_details = async (req) => {
         startTime: 1,
         usersName: "$stressusers.name",
         languages: "$stressusers.languages",
+        profileImage: "$stressusers.profileImage",
         lastConnect: 1,
         counseller: 1,
         connected: 1,
@@ -306,6 +308,7 @@ const connect_counsellor_request = async (req) => {
         startTime: 1,
         usersName: "$stressusers.name",
         languages: "$stressusers.languages",
+        profileImage: "$stressusers.profileImage",
         lastConnect: 1,
         counseller: 1,
         LastEnd: 1,
@@ -344,63 +347,9 @@ const disconnect_counsellor_request = async (req) => {
   stream.streamTimeline = null;
   stream.save();
   if (stream.status != "End") {
-    let streamss = await Stream.aggregate([
-      {
-        $match: {
-          $and: [
-            { _id: { $eq: stream._id } }
-          ]
-        }
-      },
-      {
-        $lookup: {
-          from: 'streamtokens',
-          localField: '_id',
-          foreignField: 'streamId',
-          pipeline: [
-            {
-              $match: {
-                type: { $eq: "host" }
-              }
-            },
-          ],
-          as: 'streamtokens',
-        },
-      },
-      { $unwind: "$streamtokens" },
-      {
-        $lookup: {
-          from: 'streamtimelines',
-          localField: '_id',
-          foreignField: 'streamId',
-          as: 'timelines',
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          userId: 1,
-          actualEndTime: 1,
-          startTime: 1,
-          endTime: 1,
-          token: "$streamtokens.token",
-          uid: "$streamtokens.uid",
-          chennal: "$streamtokens.chennal",
-          store: 1,
-          LastEnd: 1,
-          counlingCount: 1,
-          timelines: 1,
-          counseller: 1,
-          lastConnect: 1
-
-        }
-      }
-    ])
-    setTimeout(() => {
-      stream.languages.forEach((lan) => {
-        req.io.emit(lan + "_language", streamss[0]);
-      })
-    }, 400)
+    stream.languages.forEach((lan) => {
+      req.io.emit(lan + "_language", stream);
+    })
   }
   return stream;
 };
@@ -556,6 +505,7 @@ const get_connect_counsellor_request = async (req) => {
         store: 1,
         userName: "$stressusers.name",
         languages: "$stressusers.languages",
+        profileImage: "$stressusers.profileImage",
         LastEnd: 1,
         counlingCount: 1,
         timelines: 1
@@ -612,6 +562,7 @@ const get_counsellor_streaming_list = async (req) => {
         startTime: 1,
         usersName: "$stressusers.name",
         languages: "$stressusers.languages",
+        profileImage: "$stressusers.profileImage",
         lastConnect: 1,
         counseller: 1,
         connected: 1,
@@ -851,6 +802,7 @@ const get_perviews_comments = async (req) => {
       $addFields: {
         counsellerName: "$counsellors.name",
         languagesName: "$counsellors.languages",
+        profileImage: "$counsellors.profileImage",
         this_stream: { $eq: ["$streamId", stream._id] },
         me: { $eq: ["$counsellerID", userId] },
       },
@@ -933,6 +885,7 @@ const get_my_counsling = async (req) => {
               endTime: 1,
               startTime: 1,
               usersName: "$stressusers.name",
+              profileImage: "$stressusers.profileImage",
               languages: "$stressusers.languages",
               lastConnect: 1,
               counseller: 1,
@@ -976,6 +929,7 @@ const get_my_counsling = async (req) => {
         LastEnd: "$stream.LastEnd",
         counlingCount: "$stream.counlingCount",
         timelines: "$stream.timelines",
+        profileImage: "$stream.profileImage",
         Start: 1,
         End: 1,
         commentsss: "$comments",
@@ -1150,7 +1104,7 @@ const get_my_records = async (req) => {
             End: "$End",
             counsellerName: "$counsellerName",
             languagesName: "$languagesName",
-            profileImage:"$profileImage"
+            profileImage: "$profileImage"
           }
         }
       }
