@@ -893,7 +893,7 @@ const get_my_counsling = async (req) => {
               counseller: 1,
               LastEnd: 1,
               counlingCount: 1,
-              timelines: "$timelines"
+              timelines: "$timelines",
             }
           }
         ],
@@ -906,7 +906,7 @@ const get_my_counsling = async (req) => {
         from: 'comments',
         localField: 'streamId',
         foreignField: 'streamId',
-        // pipeline: [{ $match: { $and: [{ counsellerID: { $eq: userId } }] } }],
+        pipeline: [{ $match: { $and: [{ counsellerID: { $eq: userId } }] } }],
         as: 'comments',
       },
     },
@@ -936,6 +936,56 @@ const get_my_counsling = async (req) => {
         End: 1,
         commentsss: "$comments",
         comments: "$comments.comment",
+      }
+    },
+    {
+      $group: {
+        _id: {
+          streamId: "$streamId"
+        },
+        value: {
+          $push: {
+            _id: "$_id",
+            streamId: "$streamId",
+            actualEndTime: "$actualEndTime",
+            endTime: "$endTime",
+            startTime: "$startTime",
+            usersName: "$usersName",
+            languages: "$languages",
+            lastConnect: "$lastConnect",
+            counseller: "$counseller",
+            LastEnd: "$LastEnd",
+            counlingCount: "$counlingCount",
+            timelines: "$timelines",
+            profileImage: "$profileImage",
+            Start: "$Start",
+            End: "$End",
+            commentsss: "$commentsss",
+            comments: "$comments",
+          }
+        }
+      }
+    },
+
+    {
+      $project: {
+        _id: "$value._id",
+        streamId: "$value.streamId",
+        actualEndTime: "$value.actualEndTime",
+        endTime: "$value.endTime",
+        startTime: "$value.startTime",
+        usersName: "$value.usersName",
+        languages: "$value.languages",
+        lastConnect: "$value.lastConnect",
+        counseller: "$value.counseller",
+        LastEnd: "$value.LastEnd",
+        counlingCount: "$value.counlingCount",
+        timelines: "$value.timelines",
+        profileImage: "$value.profileImage",
+        Start: "$value.Start",
+        End: "$value.End",
+        commentsss: "$value.commentsss",
+        comments: "$value.comments",
       }
     }
 
