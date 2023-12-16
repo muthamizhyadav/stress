@@ -34,6 +34,9 @@ const Volunteerschema = mongoose.Schema(
     city: {
       type: String,
     },
+    comment: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
