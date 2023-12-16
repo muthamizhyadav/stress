@@ -10,12 +10,17 @@ const b2buser = require('./B2Busers.route');
 const menu = require('./menue.route');
 const role = require('./role.route');
 const stream = require('./stream.route');
+const Volunteer = require('./Volunteer.route');
 const router = express.Router();
 
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/volunteer',
+    route: Volunteer,
   },
   {
     path: '/users',

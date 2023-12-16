@@ -338,18 +338,12 @@ const disconnect_counsellor_request = async (req) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Your Not Connected');
   }
   stream.lastConnect = null;
-  // stream.counseller = 'no';
-  // stream.connected = false;
-  // stream.LastEnd = new Date().getTime();
-
   await Streamtimeline.findByIdAndUpdate({ _id: stream.streamTimeline }, { status: "End", End: moment() }, { new: true })
   stream.streamTimeline = null;
   stream.save();
   if (stream.status != "End") {
-    // setTimeout(() => {
     stream.languages.forEach((lan) => {
       req.io.emit(lan + "_language", stream);
-      // }, 1000)
     })
   }
   return stream;
@@ -576,9 +570,9 @@ const get_counsellor_streaming_list = async (req) => {
   ]);
 
   return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(stream)
-    }, 200)
+    // setTimeout(() => {
+    resolve(stream)
+    // }, 200)
   });;
 };
 
