@@ -28,13 +28,28 @@ const Volunteerschema = mongoose.Schema(
     gender: {
       type: String,
     },
-    dob: {
+    location: {
       type: String,
     },
-    city: {
+    Age: {
+      type: Number,
+    },
+    eduction_qualification: {
       type: String,
     },
-    comment: {
+    Are_you_student: {
+      type: String,
+    },
+    Are_you_Interest: {
+      type: String,
+    },
+    spend_monthly: {
+      type: String,
+    },
+    expectaion_from_us: {
+      type: String,
+    },
+    skils: {
       type: String,
     },
   },
