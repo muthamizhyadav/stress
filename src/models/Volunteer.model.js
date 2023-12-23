@@ -52,6 +52,12 @@ const Volunteerschema = mongoose.Schema(
     skils: {
       type: String,
     },
+    line: {
+      type: String,
+    },
+    Interest_line: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
