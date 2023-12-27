@@ -341,10 +341,13 @@ const disconnect_counsellor_request = async (req) => {
   if (stream.lastConnect != userId) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Your Not Connected');
   }
-  stream = await Stream.findByIdAndUpdate({ _id: req.body.stream }, { counseller: "no", lastConnect: null, connected: false, LastEnd: new Date().getTime() }, { new: true });
-  await Streamtimeline.findByIdAndUpdate({ _id: stream.streamTimeline }, { status: "End", End: moment() }, { new: true })
-  stream.streamTimeline = null;
-  stream.save();
+  else {
+    stream = await Stream.findByIdAndUpdate({ _id: req.body.stream }, { counseller: "no", lastConnect: null, connected: false, LastEnd: new Date().getTime() }, { new: true });
+    await Streamtimeline.findByIdAndUpdate({ _id: stream.streamTimeline }, { status: "End", End: moment() }, { new: true })
+    stream.streamTimeline = null;
+    stream.save();
+  }
+
 
   let streamss = await Stream.aggregate([
     { $match: { $and: [{ _id: { $eq: stream._id } }] } },
