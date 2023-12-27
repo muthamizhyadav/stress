@@ -247,6 +247,10 @@ const connect_counsellor_request = async (req) => {
   if (stream.counseller == 'yes') {
     throw new ApiError(httpStatus.NOT_FOUND, 'Another Counseller Onlive');
   }
+  if (stream.lastConnect != null) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Another Counseller Onlive');
+  }
+
   await Streamtimeline.updateMany({ streamId: stream._id, status: "active" }, { $set: { status: "End", End: moment() } }, { new: true });
   const timeline = await Streamtimeline.create({
     streamId: stream._id,
@@ -330,14 +334,14 @@ const connect_counsellor_request = async (req) => {
 
 const disconnect_counsellor_request = async (req) => {
   let userId = req.userId;
-  let stream = await Stream.findByIdAndUpdate({ _id: req.body.stream }, { counseller: "no", connected: false, LastEnd: new Date().getTime() }, { new: true });
+  let stream = await Stream.findById(req.body.stream)
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream Not Fount');
   }
   if (stream.lastConnect != userId) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Your Not Connected');
   }
-  stream.lastConnect = null;
+  stream = await Stream.findByIdAndUpdate({ _id: req.body.stream }, { counseller: "no", lastConnect: null, connected: false, LastEnd: new Date().getTime() }, { new: true });
   await Streamtimeline.findByIdAndUpdate({ _id: stream.streamTimeline }, { status: "End", End: moment() }, { new: true })
   stream.streamTimeline = null;
   stream.save();
