@@ -345,9 +345,49 @@ const disconnect_counsellor_request = async (req) => {
   await Streamtimeline.findByIdAndUpdate({ _id: stream.streamTimeline }, { status: "End", End: moment() }, { new: true })
   stream.streamTimeline = null;
   stream.save();
+
+  let streamss = await Stream.aggregate([
+    { $match: { $and: [{ _id: { $eq: stream._id } }] } },
+    {
+      $lookup: {
+        from: 'stressusers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'stressusers',
+      },
+    },
+    { $unwind: "$stressusers" },
+    {
+      $lookup: {
+        from: 'streamtimelines',
+        localField: '_id',
+        foreignField: 'streamId',
+        as: 'timelines',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        actualEndTime: 1,
+        endTime: 1,
+        startTime: 1,
+        usersName: "$stressusers.name",
+        languages: "$stressusers.languages",
+        profileImage: "$stressusers.profileImage",
+        lastConnect: 1,
+        counseller: 1,
+        LastEnd: 1,
+        counlingCount: 1,
+        timelines: "$timelines"
+
+      }
+    }
+  ]);
+
+
   if (stream.status != "End") {
     stream.languages.forEach((lan) => {
-      req.io.emit(lan + "_language", stream);
+      req.io.emit(lan + "_language", streamss[0]);
     })
   }
   return stream;
