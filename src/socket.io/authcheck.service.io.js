@@ -52,50 +52,52 @@ const user_disconnect_stream = async (socket, io) => {
 
         timeline.save();
         if (stream) {
-            stream.streamTimeline = null;
-            stream.counseller = 'no';
-            stream.lastConnect = null;
-            stream.LastEnd = new Date();
-            streamtimeline.End = moment();
-            stream.save();
-            let streamss = await Stream.aggregate([
-                { $match: { $and: [{ _id: { $eq: stream._id } }] } },
-                {
-                    $lookup: {
-                        from: 'users',
-                        localField: 'userId',
-                        foreignField: '_id',
-                        as: 'users',
+            if (stream.lastConnect == timeline.userId) {
+                stream.streamTimeline = null;
+                stream.counseller = 'no';
+                stream.lastConnect = null;
+                stream.LastEnd = new Date();
+                streamtimeline.End = moment();
+                stream.save();
+                let streamss = await Stream.aggregate([
+                    { $match: { $and: [{ _id: { $eq: stream._id } }] } },
+                    {
+                        $lookup: {
+                            from: 'users',
+                            localField: 'userId',
+                            foreignField: '_id',
+                            as: 'users',
+                        },
                     },
-                },
-                { $unwind: "$users" },
-                {
-                    $lookup: {
-                        from: 'streamtimelines',
-                        localField: '_id',
-                        foreignField: 'streamId',
-                        as: 'timelines',
+                    { $unwind: "$users" },
+                    {
+                        $lookup: {
+                            from: 'streamtimelines',
+                            localField: '_id',
+                            foreignField: 'streamId',
+                            as: 'timelines',
+                        },
                     },
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        actualEndTime: 1,
-                        endTime: 1,
-                        startTime: 1,
-                        usersName: "$users.name",
-                        languages: "$users.languages",
-                        lastConnect: 1,
-                        counseller: "no",
-                        LastEnd: 1,
-                        timelines: 1
+                    {
+                        $project: {
+                            _id: 1,
+                            actualEndTime: 1,
+                            endTime: 1,
+                            startTime: 1,
+                            usersName: "$users.name",
+                            languages: "$users.languages",
+                            lastConnect: 1,
+                            counseller: "no",
+                            LastEnd: 1,
+                            timelines: 1
+                        }
                     }
-                }
-            ]);
-            stream.languages.forEach(async (lan) => {
-                console.log(lan + "_language")
-                io.emit(lan + "_language", streamss[0]);
-            })
+                ]);
+                stream.languages.forEach(async (lan) => {
+                    console.log(lan + "_language")
+                    io.emit(lan + "_language", streamss[0]);
+                })
+            }
         }
         if (streamtimeline) {
             streamtimeline.status = "End";
