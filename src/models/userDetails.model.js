@@ -3,7 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 
-const { v4 } = require('uuid')
+const { v4 } = require('uuid');
 
 const userSchema = new mongoose.Schema(
   {
@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema(
     },
     info_collected: {
       type: Boolean,
-      default: false
+      default: false,
     },
     languages: {
       type: Array,
@@ -63,8 +63,7 @@ const userSchema = new mongoose.Schema(
     },
     profileImage: {
       type: String,
-    }
-
+    },
   },
   { timestamps: true }
 );
@@ -113,7 +112,7 @@ const counselorSchema = new mongoose.Schema(
     },
     info_collected: {
       type: Boolean,
-      default: false
+      default: false,
     },
     professionname: {
       type: String,
@@ -182,8 +181,8 @@ const OTPSchema = mongoose.Schema(
     },
     used: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   { timestamps: true }
 );

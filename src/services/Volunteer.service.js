@@ -3,6 +3,7 @@ const moment = require('moment');
 const httpStatus = require('http-status');
 const config = require('../config/config');
 const { Volunteer } = require('../models/Volunteer.model');
+const { Counsellor } = require('../models/userDetails.model');
 const { Otp } = require('./otp.service');
 const createUserDetails = async (body) => {
   let val = await User.create(body);
@@ -29,7 +30,7 @@ const create_volunteer = async (req) => {
 // Manage Volunteers
 
 const getVolunteers = async (req) => {
-  let values = await Volunteer.aggregate([
+  let values = await Counsellor.aggregate([
     {
       $match: {
         _id: { $ne: null },
