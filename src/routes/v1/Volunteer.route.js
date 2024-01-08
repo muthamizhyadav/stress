@@ -12,6 +12,6 @@ const storage = multer.memoryStorage({
 });
 const profile = multer({ storage }).single('profile');
 router.route('/create').post(profile, VolundeerController.create_volunteer);
-router.route('/getVolunteers').get(VolundeerController.getVolunteers);
+router.route('/getcounsellor').get(VolundeerController.getVolunteers);
 
 module.exports = router;
