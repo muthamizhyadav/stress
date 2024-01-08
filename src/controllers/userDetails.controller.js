@@ -4,8 +4,8 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const UserDetailsService = require('../services/userDetails.service');
 
-const { generateAuthTokens } = require("../services/token.service")
-const { createTimeline } = require("../services/timeline.service")
+const { generateAuthTokens } = require('../services/token.service');
+const { createTimeline } = require('../services/timeline.service');
 
 const createUserDetails = catchAsync(async (req, res) => {
   const data = await UserDetailsService.createUserDetails(req.body);
@@ -17,14 +17,12 @@ const verify_mobile_number = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-
 const verify_otp = catchAsync(async (req, res) => {
   const data = await UserDetailsService.verify_otp(req);
   const timeline = await createTimeline(data, 'clint', req.deviceInfo);
   const token = await generateAuthTokens(data, timeline);
   res.send(token);
 });
-
 
 const verify_otp_get = catchAsync(async (req, res) => {
   const data = await UserDetailsService.verify_otp_get(req);
@@ -46,6 +44,10 @@ const upload_image_profile = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const manage_Clients = catchAsync(async (req,res) => {
+  const data = await UserDetailsService.manage_Clients(req);
+  res.send(data);
+});
 
 module.exports = {
   createUserDetails,
@@ -54,5 +56,6 @@ module.exports = {
   verify_otp_get,
   get_user_deatils,
   update_user_deatils,
-  upload_image_profile
+  upload_image_profile,
+  manage_Clients,
 };
