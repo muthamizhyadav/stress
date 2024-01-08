@@ -3,7 +3,7 @@ const moment = require('moment');
 const httpStatus = require('http-status');
 const config = require('../config/config');
 const { Volunteer } = require('../models/Volunteer.model');
-const { Otp } = require("./otp.service")
+const { Otp } = require('./otp.service');
 const createUserDetails = async (body) => {
   let val = await User.create(body);
   return val;
@@ -11,9 +11,7 @@ const createUserDetails = async (body) => {
 const ApiError = require('../utils/ApiError');
 const AWS = require('aws-sdk');
 
-
 const create_volunteer = async (req) => {
-
   let phone = await Volunteer.findOne({ phoneNumber: req.body.phoneNumber });
 
   if (phone) {
@@ -26,7 +24,22 @@ const create_volunteer = async (req) => {
   let value = await Volunteer.create(req.body);
 
   return value;
-}
+};
+
+// Manage Volunteers
+
+const getVolunteers = async (req) => {
+  let values = await Volunteer.aggregate([
+    {
+      $match: {
+        _id: { $ne: null },
+      },
+    },
+  ]);
+  return values;
+};
+
 module.exports = {
-  create_volunteer
+  create_volunteer,
+  getVolunteers,
 };
