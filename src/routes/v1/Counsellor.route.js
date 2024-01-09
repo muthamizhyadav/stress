@@ -20,8 +20,6 @@ router.route('/resend/otp').post(counsellorcontroller.verify_mobile_number);
 router.route('/user/deatils').get(CounsellorAuth, counsellorcontroller.get_user_deatils);
 router.route('/user/deatils/idproof').put(CounsellorAuth, upload, counsellorcontroller.upload_image_idproof);
 router.route('/user/deatils/profile').put(CounsellorAuth, profile, counsellorcontroller.upload_image_profile);
-
-
 router.route('/user/deatils').post(CounsellorAuth, counsellorcontroller.update_user_deatils);
 
 

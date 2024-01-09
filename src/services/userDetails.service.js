@@ -110,11 +110,19 @@ const upload_image_profile = async (req) => {
 };
 
 const manage_Clients = async (req) => {
+  let { page } = req.query;
+  page = parseInt(page);
   let user = await User.aggregate([
     {
       $match: {
         _id: { $ne: null },
       },
+    },
+    {
+      $skip: page * 10,
+    },
+    {
+      $limit: 10,
     },
   ]);
   return user;

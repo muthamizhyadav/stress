@@ -30,11 +30,21 @@ const create_volunteer = async (req) => {
 // Manage Volunteers
 
 const getVolunteers = async (req) => {
+  let { page } = req.query;
+  page = parseInt(page);
+  console.log(page);
+
   let values = await Counsellor.aggregate([
     {
       $match: {
         _id: { $ne: null },
       },
+    },
+    {
+      $skip: page * 10,
+    },
+    {
+      $limit: 10,
     },
   ]);
   return values;
