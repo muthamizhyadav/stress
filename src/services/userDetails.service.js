@@ -125,7 +125,20 @@ const manage_Clients = async (req) => {
       $limit: 10,
     },
   ]);
-  return user;
+  let next = await User.aggregate([
+    {
+      $match: {
+        _id: { $ne: null },
+      },
+    },
+    {
+      $skip: page * 10 + (page + 1),
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  return { user, next: next.length == 0 ? false : true };
 };
 
 module.exports = {
