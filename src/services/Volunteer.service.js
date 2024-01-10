@@ -54,12 +54,13 @@ const getVolunteers = async (req) => {
       },
     },
     {
-      $skip: page * 10 + (page + 1),
-    },
-    {
       $limit: 10,
     },
+    {
+      $skip: page + 1 + page * 10,
+    },
   ]);
+  console.log(next);
   return { values, next: next.length == 0 ? false : true };
 };
 
