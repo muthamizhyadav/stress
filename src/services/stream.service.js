@@ -1143,6 +1143,8 @@ const get_my_records = async (req) => {
 };
 
 const getUserStreamDetails = async (req) => {
+  let page = req.query.page;
+  page = page ? parseInt(page) : 0;
   const currentTimestamp = new Date().getTime();
   let val = await Stream.aggregate([
     { $sort: { createdAt: -1 } },
@@ -1206,12 +1208,38 @@ const getUserStreamDetails = async (req) => {
         comments: { $ifNull: ['$comments.comment', null] },
         attended: { $size: '$attended' },
         status: 1,
-        adminStatus:1
+        adminStatus: 1,
       },
     },
-    { $limit: 1000 },
+    { $skip: page * 10 },
+    { $limit: 10 },
   ]);
-  return val;
+
+  let next = await Stream.aggregate([
+    { $sort: { createdAt: -1 } },
+    {
+      $lookup: {
+        from: 'stressusers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: {
+        path: '$users',
+      },
+    },
+
+    {
+      $skip: 10 * (page + 1),
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+
+  return { val, next: next.length == 0 ? false : true };
 };
 
 module.exports = {
