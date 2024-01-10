@@ -3,7 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 
-const { v4 } = require('uuid')
+const { v4 } = require('uuid');
 
 const StreamSchema = new mongoose.Schema(
   {
@@ -15,13 +15,13 @@ const StreamSchema = new mongoose.Schema(
       type: String,
     },
     startTime: {
-      type: Number
+      type: Number,
     },
     endTime: {
-      type: Number
+      type: Number,
     },
     actualEndTime: {
-      type: Number
+      type: Number,
     },
     agoraID: {
       type: String,
@@ -31,38 +31,40 @@ const StreamSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "Online"
+      default: 'Online',
     },
     languages: {
-      type: Array
+      type: Array,
     },
     lastConnect: {
       type: String,
     },
     counseller: {
       type: String,
-      default: "no"
+      default: 'no',
     },
     streamTimeline: {
       type: String,
     },
     connected: {
       type: Boolean,
-      default: false
+      default: false,
     },
     LastEnd: {
-      type: Number
+      type: Number,
     },
     counlingCount: {
-      type: Number
+      type: Number,
+    },
+    adminStatus: {
+      type: String,
+      default: 'Waiting',
     },
   },
   { timestamps: true }
 );
 
 const Stream = mongoose.model('stream', StreamSchema);
-
-
 
 const tokenSchema = new mongoose.Schema(
   {
@@ -74,19 +76,19 @@ const tokenSchema = new mongoose.Schema(
       type: String,
     },
     token: {
-      type: String
+      type: String,
     },
     uid: {
-      type: Number
+      type: Number,
     },
     streamId: {
-      type: String
+      type: String,
     },
     type: {
-      type: String
+      type: String,
     },
     cloudrecordURL: {
-      type: String
+      type: String,
     },
     resourceId: {
       type: String,
@@ -114,18 +116,11 @@ const tokenSchema = new mongoose.Schema(
     chennal: {
       type: String,
     },
-
   },
   { timestamps: true }
 );
 
 const Token = mongoose.model('streamtoken', tokenSchema);
-
-
-
-
-
-
 
 const commentsSchema = new mongoose.Schema(
   {
@@ -143,12 +138,11 @@ const commentsSchema = new mongoose.Schema(
       type: String,
     },
     Date: {
-      type: Number
+      type: Number,
     },
     streamId: {
       type: String,
-    }
-
+    },
   },
   { timestamps: true }
 );
@@ -158,5 +152,5 @@ const Comments = mongoose.model('comment', commentsSchema);
 module.exports = {
   Stream,
   Token,
-  Comments
+  Comments,
 };
