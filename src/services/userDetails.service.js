@@ -119,7 +119,7 @@ const manage_Clients = async (req) => {
       },
     },
     {
-      $skip: page + 1 + page  * 10,
+      $skip: page * 10,
     },
     {
       $limit: 10,
@@ -132,7 +132,7 @@ const manage_Clients = async (req) => {
       },
     },
     {
-      $skip: page * 10 + (page + 1),
+      $skip: page * 10 + page + 1,
     },
     {
       $limit: 10,
