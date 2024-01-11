@@ -156,7 +156,7 @@ const get_stream_details = async (req) => {
         LastEnd: 1,
         counlingCount: 1,
         timelines: '$timelines',
-        agoraappids: "$agoraappids"
+        agoraappids:"$agoraappids"
       },
     },
   ]);
@@ -466,6 +466,15 @@ const get_stresscall_details_requestt = async (req) => {
       },
     },
     {
+      $lookup: {
+        from: 'agoraappids',
+        localField: 'agoraID',
+        foreignField: '_id',
+        as: 'agoraappids',
+      },
+    },
+    { $unwind: '$agoraappids' },
+    {
       $project: {
         _id: 1,
         userId: 1,
@@ -479,6 +488,7 @@ const get_stresscall_details_requestt = async (req) => {
         LastEnd: 1,
         counlingCount: 1,
         timelines: 1,
+        agoraappids:"$agoraappids"
       },
     },
   ]);
