@@ -3,10 +3,9 @@ const moment = require('moment');
 const httpStatus = require('http-status');
 const config = require('../config/config');
 const { User, Counsellor, OTP } = require('../models/userDetails.model');
-const { Otp } = require("./otp.service")
+const { Otp } = require('./otp.service');
 const AWS = require('aws-sdk');
 const ApiError = require('../utils/ApiError');
-
 
 const verify_mobile_number = async (req) => {
   const { mobileNumber } = req.body;
@@ -15,18 +14,17 @@ const verify_mobile_number = async (req) => {
   if (!user) {
     user = await Counsellor.create({
       mobileNumber: mobileNumber,
-    })
+    });
   }
-  await OTP.updateMany({ mobileNumber: mobileNumber }, { $set: { used: true } }, { new: true })
+  await OTP.updateMany({ mobileNumber: mobileNumber }, { $set: { used: true } }, { new: true });
   let otp = await Otp(mobileNumber, user._id);
   return otp;
 };
 
-
 const verify_otp = async (req) => {
   let otpId = req.otp;
   let OTP_Code = req.body.otp;
-  let find_otp = await OTP.findById(otpId)
+  let find_otp = await OTP.findById(otpId);
   if (!find_otp) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Access');
   }
@@ -45,14 +43,14 @@ const verify_otp = async (req) => {
   find_otp.used = true;
   find_otp.save();
 
-  let user = await Counsellor.findById(req.userId)
+  let user = await Counsellor.findById(req.userId);
   return user;
-}
+};
 
 const get_user_deatils = async (req) => {
   let user = await Counsellor.findById(req.userId);
   return user;
-}
+};
 
 const verify_otp_get = async (req) => {
   let otpId = req.otp;
@@ -66,7 +64,7 @@ const verify_otp_get = async (req) => {
     _id: 0,
   });
   return find_otp;
-}
+};
 
 const upload_image_idproof = async (req) => {
   if (req.file != null) {
@@ -92,8 +90,7 @@ const upload_image_idproof = async (req) => {
   } else {
     return { message: 'Invalid' };
   }
-
-}
+};
 
 const upload_image_profile = async (req) => {
   if (req.file != null) {
@@ -119,9 +116,7 @@ const upload_image_profile = async (req) => {
   } else {
     return { message: 'Invalid' };
   }
-
-}
-
+};
 
 const update_user_deatils = async (req) => {
   let user = await Counsellor.findById(req.userId);
@@ -130,7 +125,22 @@ const update_user_deatils = async (req) => {
   }
   user = await Counsellor.findByIdAndUpdate({ _id: user._id }, { ...req.body, ...{ info_collected: true } }, { new: true });
   return user;
-}
+};
+
+const enable_Disable = async (req) => {
+  const { id } = req.body;
+  let values = await Counsellor.findById(id);
+  if (!values) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Counseller not found');
+  }
+  if (values.active == true) {
+    values.active = false;
+  } else {
+    values.active = true;
+  }
+  values.save();
+  return values;
+};
 
 module.exports = {
   verify_mobile_number,
@@ -139,5 +149,6 @@ module.exports = {
   verify_otp_get,
   upload_image_idproof,
   update_user_deatils,
-  upload_image_profile
+  upload_image_profile,
+  enable_Disable,
 };
