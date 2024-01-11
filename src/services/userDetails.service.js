@@ -141,6 +141,21 @@ const manage_Clients = async (req) => {
   return { user, next: next.length == 0 ? false : true };
 };
 
+const enable_Disable = async (req) => {
+  const { id } = req.body;
+  let values = await User.findById(id);
+  if (!values) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User not found');
+  }
+  if (values.active == true) {
+    values.active = false;
+  } else {
+    values.active = true;
+  }
+  values.save();
+  return values;
+};
+
 module.exports = {
   createUserDetails,
   verify_mobile_number,
@@ -150,4 +165,5 @@ module.exports = {
   update_user_deatils,
   upload_image_profile,
   manage_Clients,
+  enable_Disable,
 };

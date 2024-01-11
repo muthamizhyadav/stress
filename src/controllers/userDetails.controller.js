@@ -44,8 +44,13 @@ const upload_image_profile = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-const manage_Clients = catchAsync(async (req,res) => {
+const manage_Clients = catchAsync(async (req, res) => {
   const data = await UserDetailsService.manage_Clients(req);
+  res.send(data);
+});
+
+const enable_Disable = catchAsync(async (req, res) => {
+  const data = await UserDetailsService.enable_Disable(req);
   res.send(data);
 });
 
@@ -58,4 +63,5 @@ module.exports = {
   update_user_deatils,
   upload_image_profile,
   manage_Clients,
+  enable_Disable,
 };

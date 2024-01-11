@@ -3,16 +3,14 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const counsellorcontroller = require('../services/Counsellor.service');
-const { createTimeline } = require("../services/timeline.service")
+const { createTimeline } = require('../services/timeline.service');
 
-const { generateAuthTokens } = require("../services/token.service")
-
+const { generateAuthTokens } = require('../services/token.service');
 
 const verify_mobile_number = catchAsync(async (req, res) => {
   const data = await counsellorcontroller.verify_mobile_number(req);
   res.send(data);
 });
-
 
 const verify_otp = catchAsync(async (req, res) => {
   const data = await counsellorcontroller.verify_otp(req);
@@ -44,6 +42,11 @@ const upload_image_profile = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const enable_Disable = catchAsync(async (req, res) => {
+  const data = await counsellorcontroller.enable_Disable(req);
+  res.send(data);
+});
+
 module.exports = {
   verify_mobile_number,
   verify_otp,
@@ -51,5 +54,6 @@ module.exports = {
   verify_otp_get,
   upload_image_idproof,
   update_user_deatils,
-  upload_image_profile
+  upload_image_profile,
+  enable_Disable,
 };
