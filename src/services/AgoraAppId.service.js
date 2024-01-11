@@ -154,14 +154,12 @@ const get_city_list = async (req) => {
 
 const token_assign = async (minutes, streamID, streamType) => {
   let minimum = 9500 - parseInt(minutes);
-  let token = await AgoraAppId.find({ expired: false, userMinutes: { $lt: minimum }, type: { $ne: "paid" } }).limit(10);
+  let token = await AgoraAppId.find({ verifyStatus: "Working", expired: false, userMinutes: { $lt: minimum }, type: { $ne: "paid" } }).limit(10);
   let paid = await AgoraAppId.findById('33ee26ed-c087-4e5f-b11d-dc0972e2bd36');
-  console.log(paid)
-  console.log(token)
+
   return new Promise(async (resolve) => {
     if (minutes < 9500) {
       for (let i = 0; i < token.length; i++) {
-        // console.log(element)
         let element = token[i];
         let usedMinutes = element.userMinutes ? element.userMinutes : 0;
         if (usedMinutes + minutes <= 9500) {
