@@ -32,4 +32,9 @@ router.route('/get/my/comment').get(CounsellorAuth, streamrequerst.get_my_commen
 router.route('/get/my/records').get(UserAuth, streamrequerst.get_my_records);
 router.route('/getUserStreamDetails').get(streamrequerst.getUserStreamDetails);
 
+
+
+router.route('/completed/video/bystream').get(streamrequerst.get_completed_video);
+
+
 module.exports = router;
