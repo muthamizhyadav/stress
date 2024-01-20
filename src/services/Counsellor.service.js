@@ -28,20 +28,20 @@ const verify_otp = async (req) => {
   if (!find_otp) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Access');
   }
-  if (find_otp.userId != req.userId) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Access');
-  }
-  if (find_otp.OTP != OTP_Code) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid OTP');
-  }
-  if (find_otp.expTime < new Date().getTime()) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Otp Expired');
-  }
-  if (find_otp.used) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Already Used');
-  }
-  find_otp.used = true;
-  find_otp.save();
+  // if (find_otp.userId != req.userId) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Access');
+  // }
+  // if (find_otp.OTP != OTP_Code) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Invalid OTP');
+  // }
+  // if (find_otp.expTime < new Date().getTime()) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Otp Expired');
+  // }
+  // if (find_otp.used) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'Already Used');
+  // }
+  // find_otp.used = true;
+  // find_otp.save();
 
   let user = await Counsellor.findById(req.userId);
   return user;
