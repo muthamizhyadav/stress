@@ -1293,6 +1293,48 @@ const getUserStreamDetails = async (req) => {
   return { val, next: next.length == 0 ? false : true };
 };
 
+
+const get_completed_video = async (req) => {
+
+  let id = req.query.id;
+  const stream = await Stream.aggregate([
+    { $match: { $and: [{ _id: id }] } },
+
+    {
+      $lookup: {
+        from: 'streamtokens',
+        localField: '_id',
+        foreignField: 'streamId',
+        pipeline: [
+          { $match: { $and: [{ type: { $eq: "cloud" } }] } },
+          {
+            $project: {
+              _id: 1,
+              video: {$concat:["https://streamingupload.s3.ap-south-1.amazonaws.com/" , "$videoLink_mp4"]}
+            }
+          }
+        ],
+        as: 'streamtokens',
+      },
+    },
+    {
+      $unwind: {
+        path: '$streamtokens',
+      },
+    },
+    { $project: {
+      _id:1,
+      video:"$streamtokens.video"
+    } }
+  ])
+  if (stream.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+
+  return stream[0];
+
+
+}
 module.exports = {
   create_stream_request,
   get_stream_details,
@@ -1312,4 +1354,5 @@ module.exports = {
   get_my_comments,
   get_my_records,
   getUserStreamDetails,
+  get_completed_video
 };
