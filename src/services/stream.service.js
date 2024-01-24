@@ -41,7 +41,7 @@ const create_stream_request = async (req) => {
     LastEnd: moment(),
     counlingCount: count + 1,
   });
-  let agoraID = await agoraToken.token_assign(1500, stream._id, 'stress');
+  let agoraID = await agoraToken.token_assign(100, stream._id, 'stress');
   if (agoraID) {
     stream.agoraID = agoraID.element._id;
   }
@@ -466,6 +466,15 @@ const get_stresscall_details_requestt = async (req) => {
       },
     },
     {
+      $lookup: {
+        from: 'agoraappids',
+        localField: 'agoraID',
+        foreignField: '_id',
+        as: 'agoraappids',
+      },
+    },
+    { $unwind: '$agoraappids' },
+    {
       $project: {
         _id: 1,
         userId: 1,
@@ -479,6 +488,7 @@ const get_stresscall_details_requestt = async (req) => {
         LastEnd: 1,
         counlingCount: 1,
         timelines: 1,
+        agoraappids: "$agoraappids"
       },
     },
   ]);
@@ -549,6 +559,15 @@ const get_connect_counsellor_request = async (req) => {
       },
     },
     {
+      $lookup: {
+        from: 'agoraappids',
+        localField: 'agoraID',
+        foreignField: '_id',
+        as: 'agoraappids',
+      },
+    },
+    { $unwind: '$agoraappids' },
+    {
       $project: {
         _id: 1,
         userId: 1,
@@ -565,6 +584,7 @@ const get_connect_counsellor_request = async (req) => {
         LastEnd: 1,
         counlingCount: 1,
         timelines: 1,
+        agoraappids: "$agoraappids"
       },
     },
   ]);
