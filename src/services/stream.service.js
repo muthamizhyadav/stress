@@ -172,6 +172,8 @@ const production_supplier_token_cloudrecording = async (id) => {
   }
   // console.log(stream);
   value = await Token.findOne({ chennal: streamId, type: 'cloud', recoredStart: { $in: ['query', 'start'] } });
+  // console.log(value,67657)
+
   if (!value) {
     const uid = await generateUid();
     const role = Agora.RtcRole.SUBSCRIBER;
@@ -189,6 +191,7 @@ const production_supplier_token_cloudrecording = async (id) => {
     value.store = stream._id.replace(/[^a-zA-Z0-9]/g, '');
     value.save();
     if (value.videoLink == '' || value.videoLink == null) {
+      // console.log(value,67657)
       await agora_acquire(value._id, stream);
     }
   } else {
@@ -201,7 +204,7 @@ const production_supplier_token_cloudrecording = async (id) => {
       'base64'
     )}`;
     await axios
-      .get(`https://api.agora.io/v1/apps/${appID}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/query`, {
+      .get(`https://api.agora.io/v1/apps/${agoraToken.appID}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/query`, {
         headers: { Authorization },
       })
       .then((res) => { })
@@ -229,13 +232,15 @@ const production_supplier_token_cloudrecording = async (id) => {
 
 const agora_acquire = async (id, stream) => {
   let agoraToken = await AgoraAppId.findById(stream.agoraID);
+  console.log(agoraToken,8768768)
   let temtoken = id;
   let token = await Token.findById(temtoken);
   const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString(
     'base64'
   )}`;
+  console.log(Authorization)
   const acquire = await axios.post(
-    `https://api.agora.io/v1/apps/${appID.replace(/\s/g, '')}/cloud_recording/acquire`,
+    `https://api.agora.io/v1/apps/${agoraToken.appID.replace(/\s/g, '')}/cloud_recording/acquire`,
     {
       cname: token.chennal,
       uid: token.uid.toString(),
@@ -669,7 +674,7 @@ const start_cloud_recording = async (req) => {
       const resource = token.resourceId;
       const mode = 'mix';
       const start = await axios.post(
-        `https://api.agora.io/v1/apps/${appID}/cloud_recording/resourceid/${resource}/mode/${mode}/start`,
+        `https://api.agora.io/v1/apps/${agoraToken.appID}/cloud_recording/resourceid/${resource}/mode/${mode}/start`,
         {
           cname: token.chennal,
           uid: token.uid.toString(),
@@ -736,7 +741,7 @@ const recording_query = async (id) => {
   const sid = token.sid;
   const mode = 'mix';
   const query = await axios
-    .get(`https://api.agora.io/v1/apps/${appID}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/query`, {
+    .get(`https://api.agora.io/v1/apps/${agoraToken.appID}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/query`, {
       headers: { Authorization },
     })
     .then((res) => {
@@ -778,7 +783,7 @@ const stop_cloud_recording = async (req) => {
 
       const stop = await axios
         .post(
-          `https://api.agora.io/v1/apps/${appID}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/stop`,
+          `https://api.agora.io/v1/apps/${agoraToken.appID}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/stop`,
           {
             cname: token.chennal,
             uid: token.uid.toString(),
