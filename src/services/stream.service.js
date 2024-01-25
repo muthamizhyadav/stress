@@ -1298,6 +1298,11 @@ const getUserStreamDetails = async (req) => {
   return { val, next: next.length == 0 ? false : true };
 };
 const get_counsellor_counseling = async (req) => {
+  let page = req.query.page;
+  page = page ? parseInt(page) : 0;
+  // console.log(page)
+  const currentTimestamp = new Date().getTime()
+
   let value = await Streamtimeline.aggregate([
     { $sort: { createdAt: -1 } },
     {
@@ -1319,6 +1324,23 @@ const get_counsellor_counseling = async (req) => {
         localField: 'streamId',
         foreignField: '_id',
         pipeline: [
+          {
+            $addFields: {
+              status: {
+                $cond: {
+                  if: { $eq: ['$status', 'End'] },
+                  then: '$status',
+                  else: {
+                    $cond: {
+                      if: { $lt: ['$endTime', currentTimestamp] },
+                      then: 'End',
+                      else: 'Pending',
+                    },
+                  },
+                },
+              },
+            },
+          },
           {
             $lookup: {
               from: 'streamtimelines',
@@ -1349,6 +1371,7 @@ const get_counsellor_counseling = async (req) => {
                         languagesName: '$counsellors.languages',
                         Start:"$Start",
                         End:"$End",
+                        status:"$status"
                       },
                     },
                   },
@@ -1391,7 +1414,6 @@ const get_counsellor_counseling = async (req) => {
         languagesName: '$counsellors.languages',
         startTime: '$streams.startTime',
         endTime: '$streams.endTime',
-        // counlingCount: '$streams.counlingCount',
         connected: '$streams.connected',
         counseller: '$streams.counseller',
         languages: '$streams.languages',
@@ -1399,18 +1421,117 @@ const get_counsellor_counseling = async (req) => {
         status: '$streams.status',
         userName: '$users.name',
         mobileNumber: '$users.mobileNumber',
-        // streamtimelines: '$streams.streamtimelines',
         no_of_attendees: '$streams.streamtimelines.count',
         attendees: '$streams.streamtimelines.Details',
+        connect_status:"$status"
+        
       },
     },
-    { $limit: 30 },
+    { $skip: page * 10 },
+    { $limit: 10 },
   ]);
 
-  return value;
+
+
+  let next  = await Streamtimeline.aggregate([
+    { $sort: { createdAt: -1 } },
+ 
+    {
+      $lookup: {
+        from: 'streams',
+        localField: 'streamId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $addFields: {
+              status: {
+                $cond: {
+                  if: { $eq: ['$status', 'End'] },
+                  then: '$status',
+                  else: {
+                    $cond: {
+                      if: { $lt: ['$endTime', currentTimestamp] },
+                      then: 'End',
+                      else: 'Pending',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'streamtimelines',
+              localField: '_id',
+              foreignField: 'streamId',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'counsellors',
+                    localField: 'connectedBy',
+                    foreignField: '_id',
+                    as: 'counsellors',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$counsellors',
+                  },
+                },
+                {
+                  $group: {
+                    _id: null,
+                    count: { $sum: 1 },
+                    Details: {
+                      $push: {
+                        _id: '$_id',
+                        counsellorName: '$counsellors.name',
+                        languagesName: '$counsellors.languages',
+                        Start:"$Start",
+                        End:"$End",
+                        status:"$status"
+                      },
+                    },
+                  },
+                },
+              ],
+              as: 'streamtimelines',
+            },
+          },
+          {
+            $unwind: {
+              path: '$streamtimelines',
+            },
+          },
+        ],
+        as: 'streams',
+      },
+    },
+    {
+      $unwind: {
+        path: '$streams',
+      },
+    },
+    {
+      $skip: 10 * (page + 1),
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+
+
+  return { value, next: next.length == 0 ? false : true };
+
 };
 const get_completed_video = async (req) => {
   let id = req.query.id;
+
+  let page = req.query.page;
+  page = page ? parseInt(page) : 0;
+  const currentTimestamp = new Date().getTime();
+
+
   const stream = await Stream.aggregate([
     { $match: { $and: [{ _id: id }] } },
     {
