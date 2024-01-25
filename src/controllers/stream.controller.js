@@ -93,6 +93,11 @@ const getUserStreamDetails = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const get_counsellor_counseling= catchAsync(async (req, res) => {
+  const data = await streamrequerst.get_counsellor_counseling(req);
+  res.send(data);
+});
+
 const get_completed_video= catchAsync(async (req, res) => {
   const data = await streamrequerst.get_completed_video(req);
   res.send(data);
@@ -118,5 +123,6 @@ module.exports = {
   get_my_comments,
   get_my_records,
   getUserStreamDetails,
-  get_completed_video
+  get_completed_video,
+  get_counsellor_counseling
 };

@@ -16,7 +16,6 @@ const { AgoraAppId, UsageAppID, TestAgora } = require('../models/AgoraAppId.mode
 const axios = require('axios');
 const agoraToken = require('./AgoraAppId.service');
 
-
 const create_stream_request = async (req) => {
   let counsellor = await User.findById(req.userId);
   let count = await Stream.find({ userId: req.userId }).count();
@@ -156,7 +155,7 @@ const get_stream_details = async (req) => {
         LastEnd: 1,
         counlingCount: 1,
         timelines: '$timelines',
-        agoraappids: "$agoraappids"
+        agoraappids: '$agoraappids',
       },
     },
   ]);
@@ -200,14 +199,15 @@ const production_supplier_token_cloudrecording = async (id) => {
     const resource = token.resourceId;
     const sid = token.sid;
     const mode = 'mix';
-    const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString(
-      'base64'
-    )}`;
+    const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString('base64')}`;
     await axios
-      .get(`https://api.agora.io/v1/apps/${agoraToken.appID}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/query`, {
-        headers: { Authorization },
-      })
-      .then((res) => { })
+      .get(
+        `https://api.agora.io/v1/apps/${agoraToken.appID}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/query`,
+        {
+          headers: { Authorization },
+        }
+      )
+      .then((res) => {})
       .catch(async (error) => {
         await Token.findByIdAndUpdate({ _id: value._id }, { recoredStart: 'stop' }, { new: true });
         const uid = await generateUid();
@@ -232,13 +232,11 @@ const production_supplier_token_cloudrecording = async (id) => {
 
 const agora_acquire = async (id, stream) => {
   let agoraToken = await AgoraAppId.findById(stream.agoraID);
-  console.log(agoraToken,8768768)
+  console.log(agoraToken, 8768768);
   let temtoken = id;
   let token = await Token.findById(temtoken);
-  const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString(
-    'base64'
-  )}`;
-  console.log(Authorization)
+  const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString('base64')}`;
+  console.log(Authorization);
   const acquire = await axios.post(
     `https://api.agora.io/v1/apps/${agoraToken.appID.replace(/\s/g, '')}/cloud_recording/acquire`,
     {
@@ -426,12 +424,18 @@ const generateUid = async (req) => {
 };
 
 const geenerate_rtc_token = async (chennel, uid, role, expirationTimestamp, stream) => {
-
   let agoraToken = await AgoraAppId.findById(stream.agoraID);
   if (!agoraToken) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Agora nt Found');
   }
-  return Agora.RtcTokenBuilder.buildTokenWithUid(agoraToken.appID.replace(/\s/g, ''), agoraToken.appCertificate.replace(/\s/g, ''), chennel, uid, role, expirationTimestamp);
+  return Agora.RtcTokenBuilder.buildTokenWithUid(
+    agoraToken.appID.replace(/\s/g, ''),
+    agoraToken.appCertificate.replace(/\s/g, ''),
+    chennel,
+    uid,
+    role,
+    expirationTimestamp
+  );
   // return Agora.RtcTokenBuilder.buildTokenWithUid("3a9e3f2cf6e44c9bb48dcc932a59d5d8", "3004174acdfb44fd81372f86b711eca0", chennel, uid, role, expirationTimestamp);
 };
 
@@ -493,7 +497,7 @@ const get_stresscall_details_requestt = async (req) => {
         LastEnd: 1,
         counlingCount: 1,
         timelines: 1,
-        agoraappids: "$agoraappids"
+        agoraappids: '$agoraappids',
       },
     },
   ]);
@@ -589,7 +593,7 @@ const get_connect_counsellor_request = async (req) => {
         LastEnd: 1,
         counlingCount: 1,
         timelines: 1,
-        agoraappids: "$agoraappids"
+        agoraappids: '$agoraappids',
       },
     },
   ]);
@@ -666,9 +670,7 @@ const start_cloud_recording = async (req) => {
   if (token) {
     let str = await Stream.findById(token.streamId);
     let agoraToken = await AgoraAppId.findById(str.agoraID);
-    const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString(
-      'base64'
-    )}`;
+    const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString('base64')}`;
     let nowDate = moment().format('DDMMYYYY');
     if (token.recoredStart == 'acquire') {
       const resource = token.resourceId;
@@ -726,7 +728,6 @@ const start_cloud_recording = async (req) => {
 };
 
 const recording_query = async (id) => {
-
   let temtoken = id;
   let token = await Token.findById(temtoken);
   if (!token) {
@@ -734,16 +735,17 @@ const recording_query = async (id) => {
   }
   let str = await Stream.findById(token.streamId);
   let agoraToken = await AgoraAppId.findById(str.agoraID);
-  const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString(
-    'base64'
-  )}`;
+  const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString('base64')}`;
   const resource = token.resourceId;
   const sid = token.sid;
   const mode = 'mix';
   const query = await axios
-    .get(`https://api.agora.io/v1/apps/${agoraToken.appID}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/query`, {
-      headers: { Authorization },
-    })
+    .get(
+      `https://api.agora.io/v1/apps/${agoraToken.appID}/cloud_recording/resourceid/${resource}/sid/${sid}/mode/${mode}/query`,
+      {
+        headers: { Authorization },
+      }
+    )
     .then((res) => {
       return res;
     })
@@ -773,9 +775,7 @@ const stop_cloud_recording = async (req) => {
   if (token) {
     let str = await Stream.findById(token.streamId);
     let agoraToken = await AgoraAppId.findById(str.agoraID);
-    const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString(
-      'base64'
-    )}`;
+    const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString('base64')}`;
     if (token.recoredStart == 'query') {
       const resource = token.resourceId;
       const sid = token.sid;
@@ -1297,27 +1297,135 @@ const getUserStreamDetails = async (req) => {
 
   return { val, next: next.length == 0 ? false : true };
 };
+const get_counsellor_counseling = async (req) => {
+  let value = await Streamtimeline.aggregate([
+    { $sort: { createdAt: -1 } },
+    {
+      $lookup: {
+        from: 'counsellors',
+        localField: 'connectedBy',
+        foreignField: '_id',
+        as: 'counsellors',
+      },
+    },
+    {
+      $unwind: {
+        path: '$counsellors',
+      },
+    },
+    {
+      $lookup: {
+        from: 'streams',
+        localField: 'streamId',
+        foreignField: '_id',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'streamtimelines',
+              localField: '_id',
+              foreignField: 'streamId',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'counsellors',
+                    localField: 'connectedBy',
+                    foreignField: '_id',
+                    as: 'counsellors',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$counsellors',
+                  },
+                },
+                {
+                  $group: {
+                    _id: null,
+                    count: { $sum: 1 },
+                    Details: {
+                      $push: {
+                        _id: '$_id',
+                        counsellorName: '$counsellors.name',
+                        languagesName: '$counsellors.languages',
+                        Start:"$Start",
+                        End:"$End",
+                      },
+                    },
+                  },
+                },
+              ],
+              as: 'streamtimelines',
+            },
+          },
+          {
+            $unwind: {
+              path: '$streamtimelines',
+            },
+          },
+        ],
+        as: 'streams',
+      },
+    },
+    {
+      $unwind: {
+        path: '$streams',
+      },
+    },
+    {
+      $lookup: {
+        from: 'stressusers',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $unwind: {
+        path: '$users',
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        counsellorName: '$counsellors.name',
+        languagesName: '$counsellors.languages',
+        startTime: '$streams.startTime',
+        endTime: '$streams.endTime',
+        // counlingCount: '$streams.counlingCount',
+        connected: '$streams.connected',
+        counseller: '$streams.counseller',
+        languages: '$streams.languages',
+        adminStatus: '$streams.adminStatus',
+        status: '$streams.status',
+        userName: '$users.name',
+        mobileNumber: '$users.mobileNumber',
+        // streamtimelines: '$streams.streamtimelines',
+        no_of_attendees: '$streams.streamtimelines.count',
+        attendees: '$streams.streamtimelines.Details',
+      },
+    },
+    { $limit: 30 },
+  ]);
 
-
+  return value;
+};
 const get_completed_video = async (req) => {
-
   let id = req.query.id;
   const stream = await Stream.aggregate([
     { $match: { $and: [{ _id: id }] } },
-
     {
       $lookup: {
         from: 'streamtokens',
         localField: '_id',
         foreignField: 'streamId',
         pipeline: [
-          { $match: { $and: [{ type: { $eq: "cloud" } }] } },
+          { $match: { $and: [{ type: { $eq: 'cloud' } }] } },
           {
             $project: {
               _id: 1,
-              video: {$concat:["https://streamingupload.s3.ap-south-1.amazonaws.com/" , "$videoLink_mp4"]}
-            }
-          }
+              video: { $concat: ['https://streamingupload.s3.ap-south-1.amazonaws.com/', '$videoLink_mp4'] },
+            },
+          },
         ],
         as: 'streamtokens',
       },
@@ -1327,19 +1435,19 @@ const get_completed_video = async (req) => {
         path: '$streamtokens',
       },
     },
-    { $project: {
-      _id:1,
-      video:"$streamtokens.video"
-    } }
-  ])
+    {
+      $project: {
+        _id: 1,
+        video: '$streamtokens.video',
+      },
+    },
+  ]);
   if (stream.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
   }
 
   return stream[0];
-
-
-}
+};
 module.exports = {
   create_stream_request,
   get_stream_details,
@@ -1359,5 +1467,6 @@ module.exports = {
   get_my_comments,
   get_my_records,
   getUserStreamDetails,
-  get_completed_video
+  get_completed_video,
+  get_counsellor_counseling,
 };

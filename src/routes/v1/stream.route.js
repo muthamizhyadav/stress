@@ -34,6 +34,8 @@ router.route('/getUserStreamDetails').get(streamrequerst.getUserStreamDetails);
 
 
 
+router.route('/counsellor/counseling').get(streamrequerst.get_counsellor_counseling);
+
 router.route('/completed/video/bystream').get(streamrequerst.get_completed_video);
 
 
