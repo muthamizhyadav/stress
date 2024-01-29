@@ -23,9 +23,9 @@ const create_stream_request = async (req) => {
     { userId: req.userId, status: { $ne: 'End' } },
     { $set: { endTime: new Date().getTime(), LastEnd: new Date(), status: 'End' } }
   );
-  console.log(prew)
+  console.log(prew,8687678678)
   if(prew){
-    console.log(prew)
+    // console.log(prew)
     // req.io.emit(stream._id + '_stream_end', { message: 'Stream END' });
     // stream.languages.forEach((lan) => {
     //   req.io.emit(lan + '_language', { streamId: stream._id, status: 'End' });
