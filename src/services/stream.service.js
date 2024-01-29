@@ -19,18 +19,18 @@ const agoraToken = require('./AgoraAppId.service');
 const create_stream_request = async (req) => {
   let counsellor = await User.findById(req.userId);
   let count = await Stream.find({ userId: req.userId }).count();
-  let prew=await Stream.find({ userId: req.userId, status: { $ne: 'End' } });
+  let prew = await Stream.find({ userId: req.userId, status: { $ne: 'End' } });
   await Stream.updateMany(
     { userId: req.userId, status: { $ne: 'End' } },
     { $set: { endTime: new Date().getTime(), LastEnd: new Date(), status: 'End' } }
   );
-  console.log(prew,8687678678)
-  if(prew){
-    // console.log(prew)
-    // req.io.emit(stream._id + '_stream_end', { message: 'Stream END' });
-    // stream.languages.forEach((lan) => {
-    //   req.io.emit(lan + '_language', { streamId: stream._id, status: 'End' });
-    // });
+  if (prew) {
+    prew.forEach((e) => {
+      req.io.emit(e._id + '_stream_end', { message: 'Stream END' });
+      e.languages.forEach((lan) => {
+        req.io.emit(lan + '_language', { streamId: e._id, status: 'End' });
+      });
+    })
   }
   const moment_curr = moment();
   const currentTimestamp = moment_curr.add(30, 'minutes');
@@ -216,7 +216,7 @@ const production_supplier_token_cloudrecording = async (id) => {
           headers: { Authorization },
         }
       )
-      .then((res) => {})
+      .then((res) => { })
       .catch(async (error) => {
         await Token.findByIdAndUpdate({ _id: value._id }, { recoredStart: 'stop' }, { new: true });
         const uid = await generateUid();
@@ -861,7 +861,7 @@ const comment_now = async (req) => {
   let comments = await Comments.findOne({ streamId: streamId, counsellerID: userId });
 
   if (!comments) {
-    comments = await Comments.create({ streamId, comment, userId: stream.userId, counsellerID: userId, Date: moment(),streamTimeline:req.streamTimeline });
+    comments = await Comments.create({ streamId, comment, userId: stream.userId, counsellerID: userId, Date: moment(), streamTimeline: req.streamTimeline });
   } else {
     comments.comment = comment;
     comments.save();
@@ -1378,9 +1378,9 @@ const get_counsellor_counseling = async (req) => {
                         _id: '$_id',
                         counsellorName: '$counsellors.name',
                         languagesName: '$counsellors.languages',
-                        Start:"$Start",
-                        End:"$End",
-                        status:"$status"
+                        Start: "$Start",
+                        End: "$End",
+                        status: "$status"
                       },
                     },
                   },
@@ -1394,7 +1394,7 @@ const get_counsellor_counseling = async (req) => {
               path: '$streamtimelines',
             },
           },
-         
+
         ],
         as: 'streams',
       },
@@ -1424,29 +1424,29 @@ const get_counsellor_counseling = async (req) => {
         let: {
           streamId: "$streamId",
           connectedBy: "$connectedBy"
-       },
-       pipeline:[
-        {
-          $match: {
-             $expr: {
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
                 $and: [
-                   {
-                      $eq: [
-                         "$streamId",
-                         "$$streamId"
-                      ]
-                   },
-                   {
-                      $eq: [
-                         "$counsellerID",
-                         "$$connectedBy"
-                      ]
-                   }
+                  {
+                    $eq: [
+                      "$streamId",
+                      "$$streamId"
+                    ]
+                  },
+                  {
+                    $eq: [
+                      "$counsellerID",
+                      "$$connectedBy"
+                    ]
+                  }
                 ]
-             }
+              }
+            }
           }
-       }
-       ],
+        ],
         as: 'comments',
       },
     },
@@ -1455,7 +1455,7 @@ const get_counsellor_counseling = async (req) => {
         preserveNullAndEmptyArrays: true,
         path: '$comments',
       },
-    }, 
+    },
     {
       $project: {
         _id: 1,
@@ -1472,8 +1472,8 @@ const get_counsellor_counseling = async (req) => {
         mobileNumber: '$users.mobileNumber',
         no_of_attendees: '$streams.streamtimelines.count',
         attendees: '$streams.streamtimelines.Details',
-        connect_status:"$status",
-        streamId:"$streams._id",
+        connect_status: "$status",
+        streamId: "$streams._id",
         comments: { $ifNull: ['$comments.comment', null] },
       },
     },
@@ -1483,9 +1483,9 @@ const get_counsellor_counseling = async (req) => {
 
 
 
-  let next  = await Streamtimeline.aggregate([
+  let next = await Streamtimeline.aggregate([
     { $sort: { createdAt: -1 } },
- 
+
     {
       $lookup: {
         from: 'streams',
@@ -1537,9 +1537,9 @@ const get_counsellor_counseling = async (req) => {
                         _id: '$_id',
                         counsellorName: '$counsellors.name',
                         languagesName: '$counsellors.languages',
-                        Start:"$Start",
-                        End:"$End",
-                        status:"$status"
+                        Start: "$Start",
+                        End: "$End",
+                        status: "$status"
                       },
                     },
                   },
