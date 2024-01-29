@@ -1423,7 +1423,8 @@ const get_counsellor_counseling = async (req) => {
         mobileNumber: '$users.mobileNumber',
         no_of_attendees: '$streams.streamtimelines.count',
         attendees: '$streams.streamtimelines.Details',
-        connect_status:"$status"
+        connect_status:"$status",
+        streamId:"$streams._id"
         
       },
     },
