@@ -19,10 +19,18 @@ const agoraToken = require('./AgoraAppId.service');
 const create_stream_request = async (req) => {
   let counsellor = await User.findById(req.userId);
   let count = await Stream.find({ userId: req.userId }).count();
-  await Stream.updateMany(
+  let prew=await Stream.updateMany(
     { userId: req.userId, status: { $ne: 'End' } },
     { $set: { endTime: new Date().getTime(), LastEnd: new Date(), status: 'End' } }
   );
+  console.log(prew)
+  if(prew){
+    console.log(prew)
+    // req.io.emit(stream._id + '_stream_end', { message: 'Stream END' });
+    // stream.languages.forEach((lan) => {
+    //   req.io.emit(lan + '_language', { streamId: stream._id, status: 'End' });
+    // });
+  }
   const moment_curr = moment();
   const currentTimestamp = moment_curr.add(30, 'minutes');
   const expirationTimestamp =
