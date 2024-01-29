@@ -1385,6 +1385,20 @@ const get_counsellor_counseling = async (req) => {
               path: '$streamtimelines',
             },
           },
+          {
+            $lookup: {
+              from: 'comments',
+              localField: '_id',
+              foreignField: 'streamId',
+              as: 'comments',
+            },
+          },
+          {
+            $unwind: {
+              preserveNullAndEmptyArrays: true,
+              path: '$comments',
+            },
+          },
         ],
         as: 'streams',
       },
@@ -1424,7 +1438,9 @@ const get_counsellor_counseling = async (req) => {
         no_of_attendees: '$streams.streamtimelines.count',
         attendees: '$streams.streamtimelines.Details',
         connect_status:"$status",
-        streamId:"$streams._id"
+        streamId:"$streams._id",
+        comments: { $ifNull: ['$streams.comments.comment', null] },
+
         
       },
     },
