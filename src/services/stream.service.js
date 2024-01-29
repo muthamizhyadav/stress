@@ -1225,12 +1225,12 @@ const getUserStreamDetails = async (req) => {
         as: 'comments',
       },
     },
-    {
-      $unwind: {
-        preserveNullAndEmptyArrays: true,
-        path: '$comments',
-      },
-    },
+    // {
+    //   $unwind: {
+    //     preserveNullAndEmptyArrays: true,
+    //     path: '$comments',
+    //   },
+    // },
     {
       $lookup: {
         from: 'streamtokens',
@@ -1261,7 +1261,7 @@ const getUserStreamDetails = async (req) => {
         _id: 1,
         date: '$startTime',
         userName: '$users.name',
-        comments: { $ifNull: ['$comments.comment', null] },
+        comments: "$comments",
         attended: { $size: '$attended' },
         status: 1,
         adminStatus: 1,
