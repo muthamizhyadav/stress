@@ -93,6 +93,7 @@ const user_disconnect_stream = async (socket, io) => {
                         }
                     }
                 ]);
+                console.log(streamss,8768768)
                 stream.languages.forEach(async (lan) => {
                     console.log(lan + "_language")
                     io.emit(lan + "_language", streamss[0]);
