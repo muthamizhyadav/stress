@@ -1465,10 +1465,7 @@ const get_counsellor_counseling = async (req) => {
         attendees: '$streams.streamtimelines.Details',
         connect_status:"$status",
         streamId:"$streams._id",
-        comments: { $ifNull: ['$streams.comments.comment', null] },
-        commentssss:"$comments"
-
-        
+        comments: { $ifNull: ['$comments.comment', null] },
       },
     },
     { $skip: page * 10 },
