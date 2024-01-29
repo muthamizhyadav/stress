@@ -19,7 +19,8 @@ const agoraToken = require('./AgoraAppId.service');
 const create_stream_request = async (req) => {
   let counsellor = await User.findById(req.userId);
   let count = await Stream.find({ userId: req.userId }).count();
-  let prew=await Stream.updateMany(
+  let prew=await Stream.find({ userId: req.userId, status: { $ne: 'End' } });
+  await Stream.updateMany(
     { userId: req.userId, status: { $ne: 'End' } },
     { $set: { endTime: new Date().getTime(), LastEnd: new Date(), status: 'End' } }
   );
