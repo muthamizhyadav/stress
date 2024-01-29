@@ -26,6 +26,7 @@ const CounsellorAuth = async (req, res, next) => {
     let timeline = await Timeline.findById(payload.timeline);
     if (timeline) {
       if (timeline.status == 'active') {
+       req.streamTimeline = timeline.streamTimeline;
         return next();
       }
       else {

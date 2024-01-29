@@ -852,7 +852,7 @@ const comment_now = async (req) => {
   let comments = await Comments.findOne({ streamId: streamId, counsellerID: userId });
 
   if (!comments) {
-    comments = await Comments.create({ streamId, comment, userId: stream.userId, counsellerID: userId, Date: moment() });
+    comments = await Comments.create({ streamId, comment, userId: stream.userId, counsellerID: userId, Date: moment(),streamTimeline:req.streamTimeline });
   } else {
     comments.comment = comment;
     comments.save();
@@ -1385,20 +1385,7 @@ const get_counsellor_counseling = async (req) => {
               path: '$streamtimelines',
             },
           },
-          {
-            $lookup: {
-              from: 'comments',
-              localField: '_id',
-              foreignField: 'streamId',
-              as: 'comments',
-            },
-          },
-          {
-            $unwind: {
-              preserveNullAndEmptyArrays: true,
-              path: '$comments',
-            },
-          },
+         
         ],
         as: 'streams',
       },
@@ -1421,6 +1408,45 @@ const get_counsellor_counseling = async (req) => {
         path: '$users',
       },
     },
+
+    {
+      $lookup: {
+        from: 'comments',
+        let: {
+          streamId: "$streamId",
+          connectedBy: "$connectedBy"
+       },
+       pipeline:[
+        {
+          $match: {
+             $expr: {
+                $and: [
+                   {
+                      $eq: [
+                         "$streamId",
+                         "$$streamId"
+                      ]
+                   },
+                   {
+                      $eq: [
+                         "$counsellerID",
+                         "$$connectedBy"
+                      ]
+                   }
+                ]
+             }
+          }
+       }
+       ],
+        as: 'comments',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$comments',
+      },
+    }, 
     {
       $project: {
         _id: 1,
@@ -1440,6 +1466,7 @@ const get_counsellor_counseling = async (req) => {
         connect_status:"$status",
         streamId:"$streams._id",
         comments: { $ifNull: ['$streams.comments.comment', null] },
+        commentssss:"$comments"
 
         
       },

@@ -143,6 +143,9 @@ const commentsSchema = new mongoose.Schema(
     streamId: {
       type: String,
     },
+    streamTimeline:{
+      type: String,
+    }
   },
   { timestamps: true }
 );
