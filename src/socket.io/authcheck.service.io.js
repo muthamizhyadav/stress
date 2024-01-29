@@ -63,7 +63,7 @@ const user_disconnect_stream = async (socket, io) => {
                     { $match: { $and: [{ _id: { $eq: stream._id } }] } },
                     {
                         $lookup: {
-                            from: 'users',
+                            from: 'stressusers',
                             localField: 'userId',
                             foreignField: '_id',
                             as: 'users',
