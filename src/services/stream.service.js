@@ -12,6 +12,7 @@ const appCertificate = 'b0c21c32605f47f8b2228ec8494faa3d';
 const { User, Counsellor } = require('../models/userDetails.model');
 const { Timeline, Streamtimeline } = require('../models/timeline.model');
 const { AgoraAppId, UsageAppID, TestAgora } = require('../models/AgoraAppId.model');
+const userserive = require("./userDetails.service");
 
 const axios = require('axios');
 const agoraToken = require('./AgoraAppId.service');
@@ -1619,6 +1620,42 @@ const get_completed_video = async (req) => {
 
   return stream[0];
 };
+
+const inform_user_neighbour = async (req) => {
+
+  let stream = await Stream.findById(req.query.id);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+  let user = await User.findById(stream.userId)
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  let otp = await userserive.Otp(user.neighbourContact, user._id);
+
+  return otp;
+
+}
+
+const inform_user_immediate = async (req) => {
+
+  let stream = await Stream.findById(req.query.id);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+  let user = await User.findById(stream.userId)
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  let otp = await userserive.Otp(user.addContact, user._id);
+  
+  return otp;
+
+}
+
+
+
 module.exports = {
   create_stream_request,
   get_stream_details,
@@ -1640,4 +1677,6 @@ module.exports = {
   getUserStreamDetails,
   get_completed_video,
   get_counsellor_counseling,
+  inform_user_neighbour,
+  inform_user_immediate
 };

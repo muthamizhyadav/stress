@@ -93,15 +93,27 @@ const getUserStreamDetails = catchAsync(async (req, res) => {
   res.send(data);
 });
 
-const get_counsellor_counseling= catchAsync(async (req, res) => {
+const get_counsellor_counseling = catchAsync(async (req, res) => {
   const data = await streamrequerst.get_counsellor_counseling(req);
   res.send(data);
 });
 
-const get_completed_video= catchAsync(async (req, res) => {
+const get_completed_video = catchAsync(async (req, res) => {
   const data = await streamrequerst.get_completed_video(req);
   res.send(data);
 });
+
+
+const inform_user_neighbour = catchAsync(async (req, res) => {
+  const data = await streamrequerst.inform_user_neighbour(req);
+  res.send(data);
+});
+
+const inform_user_immediate = catchAsync(async (req, res) => {
+  const data = await streamrequerst.inform_user_immediate(req);
+  res.send(data);
+});
+
 
 module.exports = {
   create_stream_request,
@@ -124,5 +136,7 @@ module.exports = {
   get_my_records,
   getUserStreamDetails,
   get_completed_video,
-  get_counsellor_counseling
+  get_counsellor_counseling,
+  inform_user_neighbour,
+  inform_user_immediate
 };

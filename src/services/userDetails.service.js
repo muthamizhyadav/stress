@@ -10,6 +10,7 @@ const createUserDetails = async (body) => {
 };
 const ApiError = require('../utils/ApiError');
 const AWS = require('aws-sdk');
+const { Stream } = require('winston/lib/winston/transports');
 
 const verify_mobile_number = async (req) => {
   const { mobileNumber } = req.body;
@@ -153,10 +154,13 @@ const enable_Disable = async (req) => {
     values.active = true;
   }
 
-  
+
   values.save();
   return values;
 };
+
+
+
 
 module.exports = {
   createUserDetails,
@@ -168,4 +172,5 @@ module.exports = {
   upload_image_profile,
   manage_Clients,
   enable_Disable,
+  Otp
 };

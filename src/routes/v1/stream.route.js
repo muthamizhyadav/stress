@@ -39,4 +39,9 @@ router.route('/counsellor/counseling').get(streamrequerst.get_counsellor_counsel
 router.route('/completed/video/bystream').get(streamrequerst.get_completed_video);
 
 
+
+router.route('/inform/neighbour').get(streamrequerst.inform_user_neighbour);
+router.route('/inform/immediate').get(streamrequerst.inform_user_immediate);
+
+
 module.exports = router;
