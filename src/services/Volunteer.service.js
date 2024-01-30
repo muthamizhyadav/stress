@@ -30,14 +30,29 @@ const create_volunteer = async (req) => {
 // Manage Volunteers
 
 const getVolunteers = async (req) => {
-  let { page } = req.query;
+  let { page, status, name_mobile } = req.query;
   page = parseInt(page);
-  console.log(page);
+  let statusMatch = { info_collected: true }
+  let nameMatch = { info_collected: true  }
+
+  if (status != '' && status != 'null' && status != null && status) {
+    if (status == 'Active') {
+      statusMatch = { active: true }
+    } else {
+      statusMatch = { active: false }
+    }
+  }
+
+  if (name_mobile && name_mobile != '' && name_mobile != null && name_mobile != 'null') {
+    console.log(parseInt(name_mobile))
+    nameMatch = { $or: [{ name: { $regex: name_mobile, $options: "i" } },{ mobileNumber: {$regex:name_mobile,$options:"i"}}] }
+  }
+
 
   let values = await Counsellor.aggregate([
     {
       $match: {
-        _id: { $ne: null },
+        $and: [statusMatch, nameMatch]
       },
     },
     {
@@ -50,7 +65,7 @@ const getVolunteers = async (req) => {
   let next = await Counsellor.aggregate([
     {
       $match: {
-        _id: { $ne: null },
+        $and: [statusMatch, nameMatch]
       },
     },
     {
