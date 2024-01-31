@@ -1649,12 +1649,56 @@ const inform_user_immediate = async (req) => {
   }
 
   let otp = await userserive.Otp(user.addContact, user._id);
-  
+
   return otp;
 
 }
 
 
+const admin_watch_live = async (req) => {
+  let userId = req.userId;
+  let streamId = req.query.id;
+
+  let stream = await Stream.findById(streamId);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+  let token = await Token.findOne({ streamId: stream._id, userId: userId });
+
+  if (!token) {
+    let tokens = await geenerate_rtc_token(stream._id, uid, 1, expirationTimestamp, stream);
+    token = await Token.create({
+      type: 'admin',
+      token: tokens,
+      uid: uid,
+      streamId: stream._id,
+      chennal: stream._id,
+      userId: userId,
+    });
+  }
+
+  return { token, stream };
+}
+
+const get_live_stream_details = async (req) => {
+  let userId = req.userId;
+  let streamId = req.query.id;
+  let token = await Token.findOne({ streamId: stream._id, userId: userId });
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Token not found');
+  }
+  let stream = await Stream.findById(streamId);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+  let user = await User.findById(stream.userId);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  let counsellor = await Counsellor.findById(stream.lastConnect);
+
+  return { token, stream, user, counsellor };
+}
 
 module.exports = {
   create_stream_request,
@@ -1678,5 +1722,7 @@ module.exports = {
   get_completed_video,
   get_counsellor_counseling,
   inform_user_neighbour,
-  inform_user_immediate
+  inform_user_immediate,
+  admin_watch_live,
+  get_live_stream_details
 };

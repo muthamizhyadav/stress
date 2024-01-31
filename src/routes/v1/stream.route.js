@@ -3,6 +3,8 @@ const streamrequerst = require('../../controllers/stream.controller');
 const router = express.Router();
 const multer = require('multer');
 const { UserAuth, verifyOTP } = require('../../controllers/userauth.controller');
+const authorization = require('../../controllers/tokenVerify.controller');
+
 
 const { CounsellorAuth } = require('../../controllers/Counsellorauth.controller');
 
@@ -42,6 +44,13 @@ router.route('/completed/video/bystream').get(streamrequerst.get_completed_video
 
 router.route('/inform/neighbour').get(streamrequerst.inform_user_neighbour);
 router.route('/inform/immediate').get(streamrequerst.inform_user_immediate);
+
+
+
+
+router.route('/admin/watch').post(authorization, streamrequerst.admin_watch_live);
+router.route('/get/livestrea/details').get(authorization, streamrequerst.get_live_stream_details);
+
 
 
 module.exports = router;
