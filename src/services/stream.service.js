@@ -1686,7 +1686,7 @@ const get_live_stream_details = async (req) => {
   let userId = req.userId;
   let streamId = req.query.id;
   let token = await Token.findOne({ streamId: streamId, userId: userId });
-  if (!stream) {
+  if (!token) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Token not found');
   }
   let stream = await Stream.findById(streamId);
