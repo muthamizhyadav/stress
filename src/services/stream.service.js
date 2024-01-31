@@ -1666,6 +1666,8 @@ const admin_watch_live = async (req) => {
   let token = await Token.findOne({ streamId: stream._id, userId: userId });
 
   if (!token) {
+    const uid = await generateUid();
+    const expirationTimestamp = stream.actualEndTime / 1000;
     let tokens = await geenerate_rtc_token(stream._id, uid, 1, expirationTimestamp, stream);
     token = await Token.create({
       type: 'admin',
