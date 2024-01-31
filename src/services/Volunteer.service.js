@@ -35,7 +35,7 @@ const getVolunteers = async (req) => {
   let statusMatch = { info_collected: true }
   let nameMatch = { info_collected: true  }
 
-  if (status != '' && status != 'null' && status != null && status) {
+  if ( status && status != '' && status != 'null' && status != null) {
     if (status == 'Active') {
       statusMatch = { active: true }
     } else {
