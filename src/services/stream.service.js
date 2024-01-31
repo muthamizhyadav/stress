@@ -1657,7 +1657,7 @@ const inform_user_immediate = async (req) => {
 
 const admin_watch_live = async (req) => {
   let userId = req.userId;
-  let streamId = req.query.id;
+  let streamId = req.body.id;
 
   let stream = await Stream.findById(streamId);
   if (!stream) {
