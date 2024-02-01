@@ -622,7 +622,7 @@ const get_counsellor_streaming_list = async (req) => {
   }
   let long_match = { $or: languages };
   let stream = await Stream.aggregate([
-    { $match: { $and: [long_match, { endTime: { $gte: nowTime } }, { status: { $ne: 'End' } },{ status: { $ne: 'Terminated' } }] } },
+    { $match: { $and: [long_match, { endTime: { $gte: nowTime } }, { status: { $ne: 'End' } }, { status: { $ne: 'Terminated' } }] } },
     {
       $lookup: {
         from: 'stressusers',
@@ -837,15 +837,18 @@ const stream_end = async (req) => {
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
   }
-  stream = await Stream.findByIdAndUpdate(
-    { _id: stream._id },
-    { endTime: new Date().getTime(), status: 'End', LastEnd: new Date() },
-    { new: true }
-  );
-  req.io.emit(stream._id + '_stream_end', { message: 'Stream END' });
-  stream.languages.forEach((lan) => {
-    req.io.emit(lan + '_language', { streamId: stream._id, status: 'End' });
-  });
+  if (stream.status != 'Terminated') {
+    stream = await Stream.findByIdAndUpdate(
+      { _id: stream._id },
+      { endTime: new Date().getTime(), status: 'End', LastEnd: new Date() },
+      { new: true }
+    );
+    req.io.emit(stream._id + '_stream_end', { message: 'Stream END' });
+    stream.languages.forEach((lan) => {
+      req.io.emit(lan + '_language', { streamId: stream._id, status: 'End' });
+    });
+  }
+
 
   return stream;
 };
@@ -1710,10 +1713,10 @@ const get_live_stream_details = async (req) => {
   let counsellor = await Counsellor.findById(stream.lastConnect);
 
 
-  return { token, stream, user, counsellor,agoraToken,usertoken:usertoken.uid };
+  return { token, stream, user, counsellor, agoraToken, usertoken: usertoken.uid };
 }
 
-const terminate_stream= async (req) => {
+const terminate_stream = async (req) => {
 
   let userId = req.userId;
   let streamId = req.query.id;
@@ -1722,17 +1725,18 @@ const terminate_stream= async (req) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
   }
 
-  stream.status='Terminated';
-  stream.adminStatus ="Terminated";
-  stream.terminate_user =userId;
-  
+  stream.status = 'Terminated';
+  stream.adminStatus = "Terminated";
+  stream.terminate_user = userId;
+
   stream.save();
   req.io.emit(stream._id + '_stream_end', { message: 'Stream END' });
+  req.io.emit(stream._id + '_admin_terminate', { message: 'Stream END' });
   stream.languages.forEach((lan) => {
     req.io.emit(lan + '_language', { streamId: stream._id, status: 'End' });
   });
   return stream;
-  
+
 
 }
 
