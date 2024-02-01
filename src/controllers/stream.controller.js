@@ -125,6 +125,12 @@ const get_live_stream_details= catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const terminate_stream= catchAsync(async (req, res) => {
+  const data = await streamrequerst.terminate_stream(req);
+  res.send(data);
+});
+
+
 module.exports = {
   create_stream_request,
   get_stream_details,
@@ -150,5 +156,6 @@ module.exports = {
   inform_user_neighbour,
   inform_user_immediate,
   admin_watch_live,
-  get_live_stream_details
+  get_live_stream_details,
+  terminate_stream
 };

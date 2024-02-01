@@ -1694,12 +1694,46 @@ const get_live_stream_details = async (req) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
   }
   let user = await User.findById(stream.userId);
+
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
+  let usertoken = await Token.findOne({ streamId: streamId, userId: user._id });
+  let agoraToken = await AgoraAppId.findById(stream.agoraID);
+  if (!usertoken) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User Token not found');
+  }
+  if (!agoraToken) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Agora App not found');
+  }
+
   let counsellor = await Counsellor.findById(stream.lastConnect);
 
-  return { token, stream, user, counsellor };
+
+  return { token, stream, user, counsellor,agoraToken,usertoken:usertoken.uid };
+}
+
+const terminate_stream= async (req) => {
+
+  let userId = req.userId;
+  let streamId = req.query.id;
+  let stream = await Stream.findById(streamId);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+
+  stream.status='Terminated';
+  stream.adminStatus ="Terminated";
+  stream.terminate_user =userId;
+  
+  stream.save();
+  req.io.emit(stream._id + '_stream_end', { message: 'Stream END' });
+  stream.languages.forEach((lan) => {
+    req.io.emit(lan + '_language', { streamId: stream._id, status: 'End' });
+  });
+  return stream;
+  
+
 }
 
 module.exports = {
@@ -1726,5 +1760,6 @@ module.exports = {
   inform_user_neighbour,
   inform_user_immediate,
   admin_watch_live,
-  get_live_stream_details
+  get_live_stream_details,
+  terminate_stream
 };

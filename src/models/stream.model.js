@@ -60,6 +60,9 @@ const StreamSchema = new mongoose.Schema(
       type: String,
       default: 'Waiting',
     },
+    terminate_user:{
+      type: String,
+    }
   },
   { timestamps: true }
 );

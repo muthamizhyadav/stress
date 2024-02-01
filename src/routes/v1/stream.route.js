@@ -51,6 +51,7 @@ router.route('/inform/immediate').get(streamrequerst.inform_user_immediate);
 router.route('/admin/watch').post(authorization, streamrequerst.admin_watch_live);
 router.route('/get/livestrea/details').get(authorization, streamrequerst.get_live_stream_details);
 
+router.route('/terminate/stream').get(authorization, streamrequerst.terminate_stream);
 
 
 module.exports = router;
