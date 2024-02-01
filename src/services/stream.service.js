@@ -622,7 +622,7 @@ const get_counsellor_streaming_list = async (req) => {
   }
   let long_match = { $or: languages };
   let stream = await Stream.aggregate([
-    { $match: { $and: [long_match, { endTime: { $gte: nowTime } }, { status: { $ne: 'End' } }] } },
+    { $match: { $and: [long_match, { endTime: { $gte: nowTime } }, { status: { $ne: 'End' } },{ status: { $ne: 'Terminated' } }] } },
     {
       $lookup: {
         from: 'stressusers',
