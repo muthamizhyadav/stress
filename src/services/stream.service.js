@@ -1219,7 +1219,6 @@ const getUserStreamDetails = async (req) => {
   let userMatch = { _id:{$ne:null}}
 
   if(namecontact && namecontact !='' && namecontact !=null && namecontact != 'null' ){
-    console.log(namecontact, "asdfasdf")
     userMatch = {
       $or:[{ mobileNumber:{$regex:namecontact,$options:"i"} }, { name:{$regex:namecontact, $options:"i"} }]
     }
