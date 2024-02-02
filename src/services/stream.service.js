@@ -1281,15 +1281,60 @@ const getUserStreamDetails = async (req) => {
       },
     },
     {
+      $lookup: {
+        from: 'streamtimelines',
+        localField: '_id',
+        foreignField: 'streamId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'counsellors',
+              localField: 'connectedBy',
+              foreignField: '_id',
+              as: 'counsellors',
+            },
+          },
+          {
+            $unwind: {
+              path: '$counsellors',
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              count: { $sum: 1 },
+              Details: {
+                $push: {
+                  _id: '$_id',
+                  counsellorName: '$counsellors.name',
+                  languagesName: '$counsellors.languages',
+                  Start: "$Start",
+                  End: "$End",
+                  status: "$status"
+                },
+              },
+            },
+          },
+        ],
+        as: 'streamtimelines',
+      },
+    },
+    {
+      $unwind: {
+        path: '$streamtimelines',
+      },
+    },
+    {
       $project: {
         _id: 1,
         date: '$startTime',
         userName: '$users.name',
         userContact:"$users.mobileNumber",
         comments: "$comments",
-        attended: { $size: '$attended' },
+        attended: { $size: '$streamtimelines.Details' },
         status: 1,
         adminStatus: 1,
+        attendies:"$streamtimelines.Details"
       },
     },
     { $skip: page * 10 },
