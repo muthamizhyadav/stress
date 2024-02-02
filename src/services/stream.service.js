@@ -1326,7 +1326,12 @@ const getUserStreamDetails = async (req) => {
 const get_counsellor_counseling = async (req) => {
   let page = req.query.page;
   page = page ? parseInt(page) : 0;
-  // console.log(page)
+  let { counsellerContact } = req.query;
+  let counsellerMatch = { _id:{$ne:null} };
+  if(counsellerContact && counsellerContact !='' && counsellerContact !=null && counsellerContact !='null' ){
+    counsellerMatch = { $or:[ { mobileNumber:{$regex:counsellerContact, $options:"i"} }, {name:{$regex:counsellerContact, $options:"i"}} ] }
+  }
+
   const currentTimestamp = new Date().getTime()
 
   let value = await Streamtimeline.aggregate([
@@ -1336,6 +1341,7 @@ const get_counsellor_counseling = async (req) => {
         from: 'counsellors',
         localField: 'connectedBy',
         foreignField: '_id',
+        pipeline:[{$match:{$and:[counsellerMatch]}}],
         as: 'counsellors',
       },
     },
@@ -1477,6 +1483,7 @@ const get_counsellor_counseling = async (req) => {
       $project: {
         _id: 1,
         counsellorName: '$counsellors.name',
+        counsellerContact:'$counsellors.mobileNumber',
         languagesName: '$counsellors.languages',
         startTime: '$streams.startTime',
         endTime: '$streams.endTime',
@@ -1502,7 +1509,20 @@ const get_counsellor_counseling = async (req) => {
 
   let next = await Streamtimeline.aggregate([
     { $sort: { createdAt: -1 } },
-
+    {
+      $lookup: {
+        from: 'counsellors',
+        localField: 'connectedBy',
+        foreignField: '_id',
+        pipeline:[{$match:{$and:[counsellerMatch]}}],
+        as: 'counsellors',
+      },
+    },
+    {
+      $unwind: {
+        path: '$counsellors',
+      },
+    },
     {
       $lookup: {
         from: 'streams',
@@ -1537,6 +1557,7 @@ const get_counsellor_counseling = async (req) => {
                     from: 'counsellors',
                     localField: 'connectedBy',
                     foreignField: '_id',
+                    
                     as: 'counsellors',
                   },
                 },
