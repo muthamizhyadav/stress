@@ -622,7 +622,7 @@ const get_counsellor_streaming_list = async (req) => {
   }
   let long_match = { $or: languages };
   let stream = await Stream.aggregate([
-    { $match: { $and: [long_match, { endTime: { $gte: nowTime } }, { status: { $ne: 'End' } }] } },
+    { $match: { $and: [long_match, { endTime: { $gte: nowTime } }, { status: { $ne: 'End' } }, { status: { $ne: 'Terminated' } }] } },
     {
       $lookup: {
         from: 'stressusers',
@@ -837,15 +837,18 @@ const stream_end = async (req) => {
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
   }
-  stream = await Stream.findByIdAndUpdate(
-    { _id: stream._id },
-    { endTime: new Date().getTime(), status: 'End', LastEnd: new Date() },
-    { new: true }
-  );
-  req.io.emit(stream._id + '_stream_end', { message: 'Stream END' });
-  stream.languages.forEach((lan) => {
-    req.io.emit(lan + '_language', { streamId: stream._id, status: 'End' });
-  });
+  if (stream.status != 'Terminated') {
+    stream = await Stream.findByIdAndUpdate(
+      { _id: stream._id },
+      { endTime: new Date().getTime(), status: 'End', LastEnd: new Date() },
+      { new: true }
+    );
+    req.io.emit(stream._id + '_stream_end', { message: 'Stream END' });
+    stream.languages.forEach((lan) => {
+      req.io.emit(lan + '_language', { streamId: stream._id, status: 'End' });
+    });
+  }
+
 
   return stream;
 };
@@ -1663,12 +1666,93 @@ const inform_user_immediate = async (req) => {
   }
 
   let otp = await userserive.Otp(user.addContact, user._id);
-  
+
   return otp;
 
 }
 
 
+const admin_watch_live = async (req) => {
+  let userId = req.userId;
+  let streamId = req.body.id;
+
+  let stream = await Stream.findById(streamId);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+  let token = await Token.findOne({ streamId: stream._id, userId: userId });
+
+  if (!token) {
+    const uid = await generateUid();
+    const expirationTimestamp = stream.actualEndTime / 1000;
+    let tokens = await geenerate_rtc_token(stream._id, uid, 1, expirationTimestamp, stream);
+    token = await Token.create({
+      type: 'admin',
+      token: tokens,
+      uid: uid,
+      streamId: stream._id,
+      chennal: stream._id,
+      userId: userId,
+    });
+  }
+
+  return { token, stream };
+}
+
+const get_live_stream_details = async (req) => {
+  let userId = req.userId;
+  let streamId = req.query.id;
+  let token = await Token.findOne({ streamId: streamId, userId: userId });
+  if (!token) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Token not found');
+  }
+  let stream = await Stream.findById(streamId);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+  let user = await User.findById(stream.userId);
+
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  let usertoken = await Token.findOne({ streamId: streamId, userId: user._id });
+  let agoraToken = await AgoraAppId.findById(stream.agoraID);
+  if (!usertoken) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User Token not found');
+  }
+  if (!agoraToken) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Agora App not found');
+  }
+
+  let counsellor = await Counsellor.findById(stream.lastConnect);
+
+
+  return { token, stream, user, counsellor, agoraToken, usertoken: usertoken.uid };
+}
+
+const terminate_stream = async (req) => {
+
+  let userId = req.userId;
+  let streamId = req.query.id;
+  let stream = await Stream.findById(streamId);
+  if (!stream) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
+  }
+
+  stream.status = 'Terminated';
+  stream.adminStatus = "Terminated";
+  stream.terminate_user = userId;
+
+  stream.save();
+  req.io.emit(stream._id + '_stream_end', { message: 'Stream END' });
+  req.io.emit(stream._id + '_admin_terminate', { message: 'Stream END' });
+  stream.languages.forEach((lan) => {
+    req.io.emit(lan + '_language', { streamId: stream._id, status: 'End' });
+  });
+  return stream;
+
+
+}
 
 module.exports = {
   create_stream_request,
@@ -1692,5 +1776,8 @@ module.exports = {
   get_completed_video,
   get_counsellor_counseling,
   inform_user_neighbour,
-  inform_user_immediate
+  inform_user_immediate,
+  admin_watch_live,
+  get_live_stream_details,
+  terminate_stream
 };
