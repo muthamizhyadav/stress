@@ -1211,6 +1211,17 @@ const get_my_records = async (req) => {
 const getUserStreamDetails = async (req) => {
   let page = req.query.page;
   page = page ? parseInt(page) : 0;
+  const { namecontact } = req.query;
+
+  let userMatch = { _id:{$ne:null}}
+
+  if(namecontact && namecontact !='' && namecontact !=null && namecontact != 'null' ){
+    console.log(namecontact, "asdfasdf")
+    userMatch = {
+      $or:[{ mobileNumber:{$regex:namecontact,$options:"i"} }, { name:{$regex:namecontact, $options:"i"} }]
+    }
+  }
+
   const currentTimestamp = new Date().getTime();
   let val = await Stream.aggregate([
     { $sort: { createdAt: -1 } },
@@ -1219,6 +1230,7 @@ const getUserStreamDetails = async (req) => {
         from: 'stressusers',
         localField: 'userId',
         foreignField: '_id',
+        pipeline:[{$match:{$and:[userMatch]}}],
         as: 'users',
       },
     },
@@ -1271,6 +1283,7 @@ const getUserStreamDetails = async (req) => {
         _id: 1,
         date: '$startTime',
         userName: '$users.name',
+        userContact:"$users.mobileNumber",
         comments: "$comments",
         attended: { $size: '$attended' },
         status: 1,
@@ -1288,6 +1301,7 @@ const getUserStreamDetails = async (req) => {
         from: 'stressusers',
         localField: 'userId',
         foreignField: '_id',
+        pipeline:[{$match:{$and:[userMatch]}}],
         as: 'users',
       },
     },
