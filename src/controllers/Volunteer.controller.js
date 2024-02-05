@@ -17,7 +17,13 @@ const getVolunteers = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+
+const get_volunteer = catchAsync(async (req, res) => {
+  const data = await VolundeerService.get_volunteer(req);
+  res.send(data);
+});
 module.exports = {
   create_volunteer,
   getVolunteers,
+  get_volunteer
 };

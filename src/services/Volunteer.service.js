@@ -33,9 +33,9 @@ const getVolunteers = async (req) => {
   let { page, status, name_mobile } = req.query;
   page = parseInt(page);
   let statusMatch = { info_collected: true }
-  let nameMatch = { info_collected: true  }
+  let nameMatch = { info_collected: true }
 
-  if ( status && status != '' && status != 'null' && status != null) {
+  if (status && status != '' && status != 'null' && status != null) {
     if (status == 'Active') {
       statusMatch = { active: true }
     } else {
@@ -45,7 +45,7 @@ const getVolunteers = async (req) => {
 
   if (name_mobile && name_mobile != '' && name_mobile != null && name_mobile != 'null') {
     console.log(parseInt(name_mobile))
-    nameMatch = { $or: [{ name: { $regex: name_mobile, $options: "i" } },{ mobileNumber: {$regex:name_mobile,$options:"i"}}] }
+    nameMatch = { $or: [{ name: { $regex: name_mobile, $options: "i" } }, { mobileNumber: { $regex: name_mobile, $options: "i" } }] }
   }
 
 
@@ -75,11 +75,35 @@ const getVolunteers = async (req) => {
       $skip: page + 1 + page * 10,
     },
   ]);
-  console.log(next);
   return { values, next: next.length == 0 ? false : true };
 };
 
+
+const get_volunteer = async (req) => {
+  const page = req.query.page == null || req.query.page == '' || req.query.page == 'null' ? 0 : parseInt(req.query.page);
+
+  console.log(page)
+
+  let value = await Volunteer.aggregate([
+    { $match: { $and: [{ active: true }] } },
+    {
+      $skip: page * 10,
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+  
+  let next = await Volunteer.aggregate([
+    { $match: { $and: [{ active: true }] } },
+    { $skip: 10 * (page + 1) },
+    { $limit: 10 },
+  ])
+
+  return { value, next: next.length != 0 };
+}
 module.exports = {
   create_volunteer,
   getVolunteers,
+  get_volunteer
 };

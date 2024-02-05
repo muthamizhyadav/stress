@@ -14,4 +14,9 @@ const profile = multer({ storage }).single('profile');
 router.route('/create').post(profile, VolundeerController.create_volunteer);
 router.route('/getcounsellor').get(VolundeerController.getVolunteers);
 
+
+router.route('/get/volunteer').get(VolundeerController.get_volunteer);
+
+
+
 module.exports = router;
