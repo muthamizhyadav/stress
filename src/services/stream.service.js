@@ -1267,6 +1267,7 @@ const getUserStreamDetails = async (req) => {
               mobileNumber: "$counsellors.mobileNumber",
             },
           },
+          { $unset: "$counsellors" }
         ],
         as: 'comments',
       },
