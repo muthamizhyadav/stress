@@ -93,7 +93,7 @@ const get_volunteer = async (req) => {
       $limit: 10,
     },
   ]);
-  
+
   let next = await Volunteer.aggregate([
     { $match: { $and: [{ active: true }] } },
     { $skip: 10 * (page + 1) },
@@ -102,8 +102,36 @@ const get_volunteer = async (req) => {
 
   return { value, next: next.length != 0 };
 }
+
+const volinteer_approve = async (req) => {
+
+  let value = await Volunteer.findById(req.body.id);
+
+  if (!value) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Volunteer Not Found');
+  }
+
+  value.status = 'Approved';
+  value.save();
+  return value;
+}
+
+
+const volinteer_reject = async (req) => {
+  let value = await Volunteer.findById(req.body.id);
+
+  if (!value) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Volunteer Not Found');
+  }
+
+  value.status = 'Rejected';
+  value.save();
+  return value;
+}
 module.exports = {
   create_volunteer,
   getVolunteers,
-  get_volunteer
+  get_volunteer,
+  volinteer_approve,
+  volinteer_reject
 };

@@ -16,6 +16,8 @@ router.route('/getcounsellor').get(VolundeerController.getVolunteers);
 
 
 router.route('/get/volunteer').get(VolundeerController.get_volunteer);
+router.route('/approve').put(VolundeerController.volinteer_approve);
+router.route('/reject').put(VolundeerController.volinteer_reject);
 
 
 

@@ -22,8 +22,22 @@ const get_volunteer = catchAsync(async (req, res) => {
   const data = await VolundeerService.get_volunteer(req);
   res.send(data);
 });
+
+const volinteer_approve = catchAsync(async (req, res) => {
+  const data = await VolundeerService.volinteer_approve(req);
+  res.send(data);
+});
+
+const volinteer_reject = catchAsync(async (req, res) => {
+  const data = await VolundeerService.volinteer_reject(req);
+  res.send(data);
+});
+
+
 module.exports = {
   create_volunteer,
   getVolunteers,
-  get_volunteer
+  get_volunteer,
+  volinteer_approve,
+  volinteer_reject
 };
