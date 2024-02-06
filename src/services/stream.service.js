@@ -1216,11 +1216,11 @@ const getUserStreamDetails = async (req) => {
   page = page ? parseInt(page) : 0;
   const { namecontact } = req.query;
 
-  let userMatch = { _id:{$ne:null}}
+  let userMatch = { _id: { $ne: null } }
 
-  if(namecontact && namecontact !='' && namecontact !=null && namecontact != 'null' ){
+  if (namecontact && namecontact != '' && namecontact != null && namecontact != 'null') {
     userMatch = {
-      $or:[{ mobileNumber:{$regex:namecontact,$options:"i"} }, { name:{$regex:namecontact, $options:"i"} }]
+      $or: [{ mobileNumber: { $regex: namecontact, $options: "i" } }, { name: { $regex: namecontact, $options: "i" } }]
     }
   }
 
@@ -1232,7 +1232,7 @@ const getUserStreamDetails = async (req) => {
         from: 'stressusers',
         localField: 'userId',
         foreignField: '_id',
-        pipeline:[{$match:{$and:[userMatch]}}],
+        pipeline: [{ $match: { $and: [userMatch] } }],
         as: 'users',
       },
     },
@@ -1246,6 +1246,28 @@ const getUserStreamDetails = async (req) => {
         from: 'comments',
         localField: '_id',
         foreignField: 'streamId',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'counsellors',
+              localField: 'counsellerID',
+              foreignField: '_id',
+              as: 'counsellors',
+            },
+          },
+          {
+            $unwind: {
+              path: '$counsellors',
+            },
+          },
+          {
+            $addFields: {
+              name: "$counsellors.name",
+              profileImage: "$counsellors.profileImage",
+              mobileNumber: "$counsellors.mobileNumber",
+            },
+          },
+        ],
         as: 'comments',
       },
     },
@@ -1329,12 +1351,12 @@ const getUserStreamDetails = async (req) => {
         _id: 1,
         date: '$startTime',
         userName: '$users.name',
-        userContact:"$users.mobileNumber",
+        userContact: "$users.mobileNumber",
         comments: "$comments",
         attended: { $size: '$streamtimelines.Details' },
         status: 1,
         adminStatus: 1,
-        attendies:"$streamtimelines.Details"
+        attendies: "$streamtimelines.Details"
       },
     },
     { $skip: page * 10 },
@@ -1348,7 +1370,7 @@ const getUserStreamDetails = async (req) => {
         from: 'stressusers',
         localField: 'userId',
         foreignField: '_id',
-        pipeline:[{$match:{$and:[userMatch]}}],
+        pipeline: [{ $match: { $and: [userMatch] } }],
         as: 'users',
       },
     },
@@ -1372,9 +1394,9 @@ const get_counsellor_counseling = async (req) => {
   let page = req.query.page;
   page = page ? parseInt(page) : 0;
   let { counsellerContact } = req.query;
-  let counsellerMatch = { _id:{$ne:null} };
-  if(counsellerContact && counsellerContact !='' && counsellerContact !=null && counsellerContact !='null' ){
-    counsellerMatch = { $or:[ { mobileNumber:{$regex:counsellerContact, $options:"i"} }, {name:{$regex:counsellerContact, $options:"i"}} ] }
+  let counsellerMatch = { _id: { $ne: null } };
+  if (counsellerContact && counsellerContact != '' && counsellerContact != null && counsellerContact != 'null') {
+    counsellerMatch = { $or: [{ mobileNumber: { $regex: counsellerContact, $options: "i" } }, { name: { $regex: counsellerContact, $options: "i" } }] }
   }
 
   const currentTimestamp = new Date().getTime()
@@ -1386,7 +1408,7 @@ const get_counsellor_counseling = async (req) => {
         from: 'counsellors',
         localField: 'connectedBy',
         foreignField: '_id',
-        pipeline:[{$match:{$and:[counsellerMatch]}}],
+        pipeline: [{ $match: { $and: [counsellerMatch] } }],
         as: 'counsellors',
       },
     },
@@ -1528,7 +1550,7 @@ const get_counsellor_counseling = async (req) => {
       $project: {
         _id: 1,
         counsellorName: '$counsellors.name',
-        counsellerContact:'$counsellors.mobileNumber',
+        counsellerContact: '$counsellors.mobileNumber',
         languagesName: '$counsellors.languages',
         startTime: '$streams.startTime',
         endTime: '$streams.endTime',
@@ -1559,7 +1581,7 @@ const get_counsellor_counseling = async (req) => {
         from: 'counsellors',
         localField: 'connectedBy',
         foreignField: '_id',
-        pipeline:[{$match:{$and:[counsellerMatch]}}],
+        pipeline: [{ $match: { $and: [counsellerMatch] } }],
         as: 'counsellors',
       },
     },
@@ -1602,7 +1624,7 @@ const get_counsellor_counseling = async (req) => {
                     from: 'counsellors',
                     localField: 'connectedBy',
                     foreignField: '_id',
-                    
+
                     as: 'counsellors',
                   },
                 },
