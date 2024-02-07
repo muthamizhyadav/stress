@@ -71,9 +71,7 @@ const getVolunteers = async (req) => {
     {
       $limit: 10,
     },
-    {
-      $skip: page + 1 + page * 10,
-    },
+    { $skip: 10 * (page + 1) },
   ]);
   return { values, next: next.length == 0 ? false : true };
 };

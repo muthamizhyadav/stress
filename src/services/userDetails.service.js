@@ -146,9 +146,7 @@ const manage_Clients = async (req) => {
         $and: [statusMatch, nameMatch, { info_collected: { $eq: true } }]
       },
     },
-    {
-      $skip: page * 10 + page + 1,
-    },
+    { $skip: 10 * (page + 1) },
     {
       $limit: 10,
     },
