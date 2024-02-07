@@ -111,26 +111,26 @@ const upload_image_profile = async (req) => {
 };
 
 const manage_Clients = async (req) => {
-  let { page, status,name_mobile  } = req.query;
-  let statusMatch = {_id:{$ne:null} }
-  let nameMatch = {_id:{$ne:null}}
+  let { page, status, name_mobile } = req.query;
+  let statusMatch = { _id: { $ne: null } }
+  let nameMatch = { _id: { $ne: null } }
 
-  if(status && status !='' && status != null){
-    if(status == 'Active'){
-      statusMatch = {active:true}
-    }else{
-      statusMatch = {active:false}
+  if (status && status != '' && status != null) {
+    if (status == 'Active') {
+      statusMatch = { active: true }
+    } else {
+      statusMatch = { active: false }
     }
   }
 
-  if(name_mobile && name_mobile != null && name_mobile != 'null' && name_mobile !='' ){
-    nameMatch = { $or:[{name:{$regex:name_mobile, $options:"i"}}, {mobileNumber:{$regex:name_mobile,$options:"i"}} ] }
+  if (name_mobile && name_mobile != null && name_mobile != 'null' && name_mobile != '') {
+    nameMatch = { $or: [{ name: { $regex: name_mobile, $options: "i" } }, { mobileNumber: { $regex: name_mobile, $options: "i" } }] }
   }
   page = parseInt(page);
   let user = await User.aggregate([
     {
       $match: {
-        $and:[statusMatch,nameMatch]
+        $and: [statusMatch, nameMatch, { info_collected: { $eq: true } }]
       },
     },
     {
@@ -143,7 +143,7 @@ const manage_Clients = async (req) => {
   let next = await User.aggregate([
     {
       $match: {
-        $and:[statusMatch,nameMatch]
+        $and: [statusMatch, nameMatch, { info_collected: { $eq: true } }]
       },
     },
     {
