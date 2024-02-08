@@ -93,9 +93,9 @@ const user_disconnect_stream = async (socket, io) => {
                         }
                     }
                 ]);
-                // console.log(streamss,8768768,stream)
+                // //console.log(streamss,8768768,stream)
                 stream.languages.forEach(async (lan) => {
-                    console.log(lan + "_language")
+                    //console.log(lan + "_language")
                     io.emit(lan + "_language", streamss[0]);
                 })
             }
@@ -116,9 +116,9 @@ const user_disconnect_stream = async (socket, io) => {
                 { $set: { endTime: new Date().getTime(), LastEnd: new Date(), status: 'End' } }
             );
             prew.forEach((e) => {
-                req.io.emit(e._id + '_stream_end', { message: 'Stream END' });
+                io.emit(e._id + '_stream_end', { message: 'Stream END' });
                 e.languages.forEach((lan) => {
-                    req.io.emit(lan + '_language', { streamId: e._id, status: 'End' });
+                    io.emit(lan + '_language', { streamId: e._id, status: 'End' });
                 });
             })
         }

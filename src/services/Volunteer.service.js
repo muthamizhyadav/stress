@@ -44,7 +44,7 @@ const getVolunteers = async (req) => {
   }
 
   if (name_mobile && name_mobile != '' && name_mobile != null && name_mobile != 'null') {
-    console.log(parseInt(name_mobile))
+    //console.log(parseInt(name_mobile))
     nameMatch = { $or: [{ name: { $regex: name_mobile, $options: "i" } }, { mobileNumber: { $regex: name_mobile, $options: "i" } }] }
   }
 
@@ -80,7 +80,7 @@ const getVolunteers = async (req) => {
 const get_volunteer = async (req) => {
   const page = req.query.page == null || req.query.page == '' || req.query.page == 'null' ? 0 : parseInt(req.query.page);
 
-  console.log(page)
+  //console.log(page)
 
   let value = await Volunteer.aggregate([
     { $match: { $and: [{ active: true }] } },

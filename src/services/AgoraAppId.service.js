@@ -131,7 +131,7 @@ const { Country, State, City } = require('country-state-city');
 const get_country_list = async (req) => {
   // const csc = require('country-state-city').Country;
   const countries = Country.getAllCountries();
-  // console.log(countries);
+  // //console.log(countries);
   return countries;
 
 }
@@ -140,7 +140,7 @@ const get_state_list = async (req) => {
 
   // const csc = require('country-state-city').Country;
   const state = State.getStatesOfCountry(req.query.county);
-  // console.log(state);
+  // //console.log(state);
   return state;
 
 
@@ -347,7 +347,7 @@ const agora_acquire = async (id, agroaID) => {
 
 const recording_start = async (req) => {
   let test = await TestAgora.findById(req.query.id);
-  console.log(test)
+  //console.log(test)
   if (test) {
     let agoraToken = await AgoraAppId.findById(test.tokenId);
     const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString(
@@ -355,10 +355,10 @@ const recording_start = async (req) => {
     )}`;
     if (test.status == 'acquire') {
       const resource = test.resourceId;
-      //console.log(resource)
-      //console.log(token)
+      ////console.log(resource)
+      ////console.log(token)
       const mode = 'mix';
-      console.log(`https://api.agora.io/v1/apps/${agoraToken.appID.replace(/\s/g, '')}/cloud_recording/resourceid/${resource}/mode/${mode}/start`, 9876578)
+      //console.log(`https://api.agora.io/v1/apps/${agoraToken.appID.replace(/\s/g, '')}/cloud_recording/resourceid/${resource}/mode/${mode}/start`, 9876578)
       const start = await axios.post(
         `https://api.agora.io/v1/apps/${agoraToken.appID.replace(/\s/g, '')}/cloud_recording/resourceid/${resource}/mode/${mode}/start`,
         {

@@ -45,9 +45,9 @@ const verifyOTP = async (req, res, next) => {
     return res.send(httpStatus.UNAUTHORIZED, 'Invalid Access set');
   }
   try {
-    console.log(token, 2342)
+    //console.log(token, 2342)
     const payload = jwt.verify(token, config.jwt.secret);
-    console.log(payload, 2342)
+    //console.log(payload, 2342)
     const userss = await User.findById(payload['userId']);
     if (!userss) {
       return res.send(httpStatus.UNAUTHORIZED, 'User Not Found');

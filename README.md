@@ -338,9 +338,9 @@ logger.verbose('message'); // level 4
 logger.debug('message'); // level 5
 ```
 
-In development mode, log messages of all severity levels will be printed to the console.
+In development mode, log messages of all severity levels will be printed to the //console.
 
-In production mode, only `info`, `warn`, and `error` logs will be printed to the console.\
+In production mode, only `info`, `warn`, and `error` logs will be printed to the //console.\
 It is up to the server (or process manager) to actually read them from the console and store them in log files.\
 This app uses pm2 in production mode, which is already configured to store the logs in log files.
 

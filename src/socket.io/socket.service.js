@@ -6,7 +6,7 @@ function initSocketService(server, io) {
 
     io.use(async (socket, next) => {
         const token = socket.handshake.auth.token;
-        // console.log(token)
+        // //console.log(token)
         if (token) {
             await authcheck.auth_details_counsellor(socket, token, next)
         }
@@ -23,7 +23,7 @@ function initSocketService(server, io) {
         socket.on('user_jion', (msg) => {
         });
         socket.on('disconnect', async () => {
-            console.log('User disconnected', socket.name, socket.mobileNumber, socket.id,socket.userId);
+            //console.log('User disconnected', socket.name, socket.mobileNumber, socket.id,socket.userId);
             await authcheck.user_disconnect_stream(socket, io)
         });
     });

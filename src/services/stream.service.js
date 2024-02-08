@@ -179,9 +179,9 @@ const production_supplier_token_cloudrecording = async (id) => {
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream not found');
   }
-  // console.log(stream);
+  // //console.log(stream);
   value = await Token.findOne({ chennal: streamId, type: 'cloud', recoredStart: { $in: ['query', 'start'] } });
-  // console.log(value,67657)
+  // //console.log(value,67657)
 
   if (!value) {
     const uid = await generateUid();
@@ -200,7 +200,7 @@ const production_supplier_token_cloudrecording = async (id) => {
     value.store = stream._id.replace(/[^a-zA-Z0-9]/g, '');
     value.save();
     if (value.videoLink == '' || value.videoLink == null) {
-      // console.log(value,67657)
+      // //console.log(value,67657)
       await agora_acquire(value._id, stream);
     }
   } else {
@@ -242,11 +242,11 @@ const production_supplier_token_cloudrecording = async (id) => {
 
 const agora_acquire = async (id, stream) => {
   let agoraToken = await AgoraAppId.findById(stream.agoraID);
-  console.log(agoraToken, 8768768);
+  //console.log(agoraToken, 8768768);
   let temtoken = id;
   let token = await Token.findById(temtoken);
   const Authorization = `Basic ${Buffer.from(agoraToken.Authorization.replace(/\s/g, '')).toString('base64')}`;
-  console.log(Authorization);
+  //console.log(Authorization);
   const acquire = await axios.post(
     `https://api.agora.io/v1/apps/${agoraToken.appID.replace(/\s/g, '')}/cloud_recording/acquire`,
     {
@@ -529,8 +529,8 @@ const get_connected_counseller_request = async (req) => {
 const get_connect_counsellor_request = async (req) => {
   let userId = req.userId;
   let stream = await Stream.findById(req.query.id);
-  console.log(stream);
-  console.log(req.userId);
+  //console.log(stream);
+  //console.log(req.userId);
   if (!stream) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Stream Not Fount');
   }
@@ -676,7 +676,7 @@ const get_counsellor_streaming_list = async (req) => {
 const start_cloud_recording = async (req) => {
   let id = req.query.id;
   let token = await Token.findOne({ chennal: id, type: 'cloud', recoredStart: { $eq: 'acquire' } }).sort({ created: -1 });
-  console.log(token, 87768976);
+  //console.log(token, 87768976);
   if (token) {
     let str = await Stream.findById(token.streamId);
     let agoraToken = await AgoraAppId.findById(str.agoraID);
@@ -813,7 +813,7 @@ const stop_cloud_recording = async (req) => {
         });
 
       token.recoredStart = 'stop';
-      // console.log(stop.data.serverResponse, 987389)
+      // //console.log(stop.data.serverResponse, 987389)
       if (stop.data != null) {
         if (stop.data.serverResponse.fileList.length == 2) {
           token.videoLink = stop.data.serverResponse.fileList[0].fileName;

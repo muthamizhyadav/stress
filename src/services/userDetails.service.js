@@ -15,7 +15,7 @@ const { Stream } = require('winston/lib/winston/transports');
 const verify_mobile_number = async (req) => {
   const { mobileNumber } = req.body;
   let user = await User.findOne({ mobileNumber: mobileNumber });
-  console.log(user, mobileNumber);
+  //console.log(user, mobileNumber);
   if (!user) {
     user = await User.create({
       mobileNumber: mobileNumber,
@@ -29,9 +29,9 @@ const verify_mobile_number = async (req) => {
 const verify_otp = async (req) => {
   let otpId = req.otp;
   let OTP_Code = req.body.otp;
-  console.log(otpId, 9879);
+  //console.log(otpId, 9879);
   let find_otp = await OTP.findById(otpId);
-  console.log(find_otp, 879);
+  //console.log(find_otp, 879);
   if (!find_otp) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Invalid Access');
   }
@@ -52,7 +52,7 @@ const verify_otp = async (req) => {
   find_otp.save();
 
   let user = await User.findById(req.userId);
-  console.log(user);
+  //console.log(user);
 
   return user;
 };

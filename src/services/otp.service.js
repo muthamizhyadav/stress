@@ -9,7 +9,7 @@ const { generateToken_OTP } = require("./token.service")
 
 
 const Otp = async (mobile, user) => {
-    console.log(mobile.name)
+    //console.log(mobile.name)
     const contact = mobile;
     let OTPCODE = Math.floor(100000 + Math.random() * 900000);
 
@@ -28,7 +28,7 @@ callback = function (response) {
         str += chunk;
     });
     response.on('end', function () {
-        //console.log(str);
+        ////console.log(str);
     });
 };
 

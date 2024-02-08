@@ -89,7 +89,7 @@ function parseUserAgent(userAgent) {
 const deviceDetais = async (req, res, next) => {
   const userAgent = req.headers['user-agent'];
   const deviceInfo = parseUserAgent(userAgent);
-  // //console.log(deviceInfo)
+  // ////console.log(deviceInfo)
   req.deviceInfo = deviceInfo;
   return next();
 };
