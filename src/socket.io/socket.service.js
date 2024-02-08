@@ -23,7 +23,7 @@ function initSocketService(server, io) {
         socket.on('user_jion', (msg) => {
         });
         socket.on('disconnect', async () => {
-            console.log('User disconnected', socket.name, socket.mobileNumber, socket.id);
+            console.log('User disconnected', socket.name, socket.mobileNumber, socket.id,socket.userId);
             await authcheck.user_disconnect_stream(socket, io)
         });
     });

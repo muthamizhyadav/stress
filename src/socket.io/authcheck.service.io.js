@@ -106,6 +106,23 @@ const user_disconnect_stream = async (socket, io) => {
             streamtimeline.save();
         }
     }
+
+    if (connection == null) {
+        let prew = await Stream.find({ userId: socket.userId, status: { $ne: 'End' } });
+
+        if (prew) {
+            await Stream.updateMany(
+                { userId: socket.userId, status: { $ne: 'End' } },
+                { $set: { endTime: new Date().getTime(), LastEnd: new Date(), status: 'End' } }
+            );
+            prew.forEach((e) => {
+                req.io.emit(e._id + '_stream_end', { message: 'Stream END' });
+                e.languages.forEach((lan) => {
+                    req.io.emit(lan + '_language', { streamId: e._id, status: 'End' });
+                });
+            })
+        }
+    }
     console.log('User disconnected', socket.name, socket.mobileNumber, socket.id, socket.timeline, connection);
 
 
