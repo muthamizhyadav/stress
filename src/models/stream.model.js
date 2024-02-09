@@ -60,7 +60,7 @@ const StreamSchema = new mongoose.Schema(
       type: String,
       default: 'Waiting',
     },
-    terminate_user:{
+    terminate_user: {
       type: String,
     }
   },
@@ -146,7 +146,7 @@ const commentsSchema = new mongoose.Schema(
     streamId: {
       type: String,
     },
-    streamTimeline:{
+    streamTimeline: {
       type: String,
     }
   },
@@ -155,8 +155,51 @@ const commentsSchema = new mongoose.Schema(
 
 const Comments = mongoose.model('comment', commentsSchema);
 
+
+
+
+const informSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: v4,
+    },
+    counsellerID: {
+      type: String,
+    },
+    userId: {
+      type: String,
+    },
+    streamId: {
+      type: String,
+    },
+    type: {
+      type: String,
+    },
+    neighbour: {
+      type: Boolean,
+      default: false
+    },
+    immediate: {
+      type: Boolean,
+      default: false
+    },
+    status: {
+      type: String,
+      default: "Counsellor Informed"
+    }
+
+  },
+  { timestamps: true }
+);
+
+const Informadmin = mongoose.model('informadmin', informSchema);
+
+
+
 module.exports = {
   Stream,
   Token,
   Comments,
+  Informadmin
 };

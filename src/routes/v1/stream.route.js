@@ -42,9 +42,9 @@ router.route('/completed/video/bystream').get(streamrequerst.get_completed_video
 
 
 
-router.route('/inform/neighbour').get(streamrequerst.inform_user_neighbour);
+router.route('/inform/neighbour').get(CounsellorAuth, streamrequerst.inform_user_neighbour);
 
-router.route('/inform/immediate').get(streamrequerst.inform_user_immediate);
+router.route('/inform/immediate').get(CounsellorAuth, streamrequerst.inform_user_immediate);
 
 
 

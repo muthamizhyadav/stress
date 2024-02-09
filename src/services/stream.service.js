@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const httpStatus = require('http-status');
 const config = require('../config/config');
-const { Stream, Token, Comments } = require('../models/stream.model');
+const { Stream, Token, Comments, Informadmin } = require('../models/stream.model');
 const { Otp } = require('./otp.service');
 const AWS = require('aws-sdk');
 const ApiError = require('../utils/ApiError');
@@ -1736,9 +1736,16 @@ const inform_user_neighbour = async (req) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
-  let otp = await userserive.Otp(user.neighbourContact, user._id);
-
-  return otp;
+  // let otp = await userserive.Otp(user.neighbourContact, user._id);
+  let inform = await Informadmin.findOne({ streamId: stream._id, user: stream.userId, counsellerID: req.userId });
+  if (!inform) {
+    inform = await Informadmin.create({ streamId: stream._id, user: stream.userId, counsellerID: req.userId, neighbour: true });
+  }
+  if (!inform.neighbour) {
+    inform.neighbour = true;
+    inform.save();
+  }
+  return inform;
 
 }
 
@@ -1753,9 +1760,15 @@ const inform_user_immediate = async (req) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
 
-  let otp = await userserive.Otp(user.addContact, user._id);
-
-  return otp;
+  let inform = await Informadmin.findOne({ streamId: stream._id, user: stream.userId, counsellerID: req.userId });
+  if (!inform) {
+    inform = await Informadmin.create({ streamId: stream._id, user: stream.userId, counsellerID: req.userId, immediate: true });
+  }
+  if (!inform.neighbour) {
+    inform.immediate = true;
+    inform.save();
+  }
+  return inform;
 
 }
 
