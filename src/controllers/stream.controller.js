@@ -105,27 +105,27 @@ const get_completed_video = catchAsync(async (req, res) => {
 
 
 const inform_user_neighbour = catchAsync(async (req, res) => {
-  const data = await streamrequerst.inform_user_neighbour(req);
-  res.send(data);
-});
-
-const inform_user_immediate = catchAsync(async (req, res) => {
   const data = await streamrequerst.inform_user_immediate(req);
   res.send(data);
 });
 
+const inform_user_immediate = catchAsync(async (req, res) => {
+  const data = await streamrequerst.inform_user_neighbour(req);
+  res.send(data);
+});
 
-const admin_watch_live= catchAsync(async (req, res) => {
+
+const admin_watch_live = catchAsync(async (req, res) => {
   const data = await streamrequerst.admin_watch_live(req);
   res.send(data);
 });
 
-const get_live_stream_details= catchAsync(async (req, res) => {
+const get_live_stream_details = catchAsync(async (req, res) => {
   const data = await streamrequerst.get_live_stream_details(req);
   res.send(data);
 });
 
-const terminate_stream= catchAsync(async (req, res) => {
+const terminate_stream = catchAsync(async (req, res) => {
   const data = await streamrequerst.terminate_stream(req);
   res.send(data);
 });
