@@ -1764,7 +1764,7 @@ const inform_user_immediate = async (req) => {
   if (!inform) {
     inform = await Informadmin.create({ streamId: stream._id, userId: stream.userId, counsellerID: req.userId, immediate: true });
   }
-  if (!inform.neighbour) {
+  if (!inform.immediate) {
     inform.immediate = true;
     inform.save();
   }
