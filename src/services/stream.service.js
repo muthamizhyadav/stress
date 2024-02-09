@@ -1420,6 +1420,26 @@ const get_counsellor_counseling = async (req) => {
     },
     {
       $lookup: {
+        from: 'informadmins',
+        localField: '_id',
+        foreignField: 'streamTimeLine',
+        as: 'informadmins',
+      },
+    },
+    {
+      $unwind: {
+        preserveNullAndEmptyArrays: true,
+        path: '$informadmins',
+      },
+    },
+    {
+      $addFields: {
+        immediate: { $ifNull: ['$informadmins.immediate', false] },
+        neighbour: { $ifNull: ['$informadmins.neighbour', false] },
+      },
+    },
+    {
+      $lookup: {
         from: 'streams',
         localField: 'streamId',
         foreignField: '_id',
@@ -1567,6 +1587,8 @@ const get_counsellor_counseling = async (req) => {
         connect_status: "$status",
         streamId: "$streams._id",
         comments: { $ifNull: ['$comments.comment', null] },
+        immediate: 1,
+        neighbour: 1
       },
     },
     { $skip: page * 10 },
