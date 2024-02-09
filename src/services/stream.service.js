@@ -1760,9 +1760,9 @@ const inform_user_immediate = async (req) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
 
-  let inform = await Informadmin.findOne({ streamId: stream._id, user: stream.userId, counsellerID: req.userId });
+  let inform = await Informadmin.findOne({ streamId: stream._id, userId: stream.userId, counsellerID: req.userId });
   if (!inform) {
-    inform = await Informadmin.create({ streamId: stream._id, user: stream.userId, counsellerID: req.userId, immediate: true });
+    inform = await Informadmin.create({ streamId: stream._id, userId: stream.userId, counsellerID: req.userId, immediate: true });
   }
   if (!inform.neighbour) {
     inform.immediate = true;
