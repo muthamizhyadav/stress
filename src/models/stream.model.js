@@ -187,6 +187,9 @@ const informSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "Counsellor Informed"
+    },
+    streamTimeLine: {
+      type: String,
     }
 
   },
