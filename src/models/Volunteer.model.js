@@ -61,6 +61,9 @@ const Volunteerschema = mongoose.Schema(
     status: {
       type: String,
       default: "Pending",
+    },
+    name_of_institution: {
+      type: String,
     }
   },
   { timestamps: true }
