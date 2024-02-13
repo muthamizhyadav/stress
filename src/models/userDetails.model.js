@@ -153,6 +153,9 @@ const counselorSchema = new mongoose.Schema(
     profileImage: {
       type: String,
     },
+    age: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );
