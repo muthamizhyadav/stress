@@ -88,6 +88,9 @@ const counselorSchema = new mongoose.Schema(
     address: {
       type: String,
     },
+    gender: {
+      type: String,
+    },
     occupation: {
       type: String,
     },
