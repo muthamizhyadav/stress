@@ -64,7 +64,10 @@ const Volunteerschema = mongoose.Schema(
     },
     name_of_institution: {
       type: String,
-    }
+    },
+    age: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );
