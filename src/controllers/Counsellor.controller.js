@@ -16,7 +16,7 @@ const verify_otp = catchAsync(async (req, res) => {
   const data = await counsellorcontroller.verify_otp(req);
   const timeline = await createTimeline(data, 'counsellor', req.deviceInfo);
   const token = await generateAuthTokens(data, timeline);
-  res.send({ token, data });
+  res.send(token);
 });
 
 const verify_otp_get = catchAsync(async (req, res) => {
