@@ -110,7 +110,7 @@ const upload_image_profile = async (req) => {
   }
 };
 
-const manage_Clients = async (req) => {
+const  manage_Clients = async (req) => {
   let { page, status, name_mobile } = req.query;
   let statusMatch = { _id: { $ne: null } }
   let nameMatch = { _id: { $ne: null } }
