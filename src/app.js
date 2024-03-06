@@ -98,6 +98,12 @@ const deviceDetais = async (req, res, next) => {
 
 // v1 api routes
 app.use('/v1', deviceDetais, routes);
+app.get('/', (req, res) => {
+  res.sendStatus(200);
+});
+app.get('/health', (req, res) => {
+  res.sendStatus(200);
+});
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
