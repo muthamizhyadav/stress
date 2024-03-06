@@ -21,7 +21,7 @@ const verify_otp = catchAsync(async (req, res) => {
   const data = await UserDetailsService.verify_otp(req);
   const timeline = await createTimeline(data, 'clint', req.deviceInfo);
   const token = await generateAuthTokens(data, timeline);
-  res.send(token);
+  res.send({ token, data });
 });
 
 const verify_otp_get = catchAsync(async (req, res) => {
